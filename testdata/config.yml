@@ -1,0 +1,7 @@
+version: 1
+apt:
+  packages:
+    - curl
+pkgx:
+  packages:
+    - kubectl@1.31.0
