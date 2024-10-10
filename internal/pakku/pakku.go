@@ -12,7 +12,7 @@ import (
 
 func Run(ctx context.Context, configPath string) error {
 	if len(os.Args) < 2 {
-		fmt.Printf("usage: pakku <command>\n")
+		printHelp()
 		return nil
 	}
 
@@ -29,7 +29,7 @@ func Run(ctx context.Context, configPath string) error {
 	case "init":
 		return initConfig(configPath)
 	case "help":
-		fmt.Println("help not implemented")
+		printHelp()
 		return nil
 	}
 
@@ -60,6 +60,15 @@ func Run(ctx context.Context, configPath string) error {
 	}
 
 	return nil
+}
+
+func printHelp() {
+	fmt.Println("Usage: pakku <command>")
+	fmt.Println("Available commands:")
+	fmt.Println("  init    Initialize a new pakku config")
+	fmt.Println("  help    Show this help message")
+	fmt.Println("  add     Add a new package to the config")
+	fmt.Println("  remove  Remove a package from the config")
 }
 
 func initConfig(configPath string) error {

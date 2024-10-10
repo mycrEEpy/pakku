@@ -23,7 +23,7 @@ func main() {
 
 	err := pakku.Run(ctx, *configPath)
 	if err != nil {
-		fmt.Printf("error: %s\n", err)
+		fmt.Printf("Error: %s\n", err)
 		os.Exit(1)
 	}
 }
