@@ -27,3 +27,6 @@ go.work.sum
 # IDE
 .idea/
 *.iml
+
+# Goreleaser
+dist/

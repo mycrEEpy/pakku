@@ -1,0 +1,19 @@
+version: 2
+
+builds:
+  - id: pakku
+    main: ./cmd/pakku
+    binary: pakku
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - name_template: "pakku_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    builds:
+      - pakku
