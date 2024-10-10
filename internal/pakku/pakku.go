@@ -55,6 +55,8 @@ func Run(ctx context.Context, configPath string) error {
 		fmt.Println("add not implemented")
 	case "remove":
 		fmt.Println("remove not implemented")
+	case "apply":
+		fmt.Println("apply not implemented")
 	default:
 		return fmt.Errorf("unknown command: %s", os.Args[1])
 	}
@@ -69,7 +71,7 @@ func printHelp() {
 	fmt.Println("	help				Show this help message")
 	fmt.Println("	add	<manager> <package>	Add a new package")
 	fmt.Println("	remove	<manager> <package>	Remove a package")
-	fmt.Println("	update				Update packages")
+	fmt.Println("	apply				Install & remove packages")
 }
 
 func initConfig(configPath string) error {
