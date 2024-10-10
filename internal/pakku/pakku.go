@@ -91,5 +91,12 @@ func initConfig(configPath string) error {
 		ConfigVersion: ConfigVersion{Version: 1},
 	}
 
-	return yaml.NewEncoder(file).Encode(defaultConfig)
+	err = yaml.NewEncoder(file).Encode(defaultConfig)
+	if err != nil {
+		return fmt.Errorf("failed to encode default config: %w", err)
+	}
+
+	fmt.Printf("Created new pakku config: %s\n", configPath)
+
+	return nil
 }
