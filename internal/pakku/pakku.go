@@ -65,10 +65,11 @@ func Run(ctx context.Context, configPath string) error {
 func printHelp() {
 	fmt.Println("Usage: pakku <command>")
 	fmt.Println("Available commands:")
-	fmt.Println("  init    Initialize a new pakku config")
-	fmt.Println("  help    Show this help message")
-	fmt.Println("  add     Add a new package to the config")
-	fmt.Println("  remove  Remove a package from the config")
+	fmt.Println("	init				Initialize a new pakku config")
+	fmt.Println("	help				Show this help message")
+	fmt.Println("	add	<manager> <package>	Add a new package")
+	fmt.Println("	remove	<manager> <package>	Remove a package")
+	fmt.Println("	update				Update packages")
 }
 
 func initConfig(configPath string) error {
