@@ -129,7 +129,7 @@ func (p *Pakku) handlePackage(action, manager, pkg string) error {
 
 	switch action {
 	case "add":
-		return p.writePackageToConfig(manager, pkg)
+		return p.addPackageToConfig(manager, pkg)
 	case "remove":
 		return p.removePackageFromConfig(manager, pkg)
 	default:
@@ -137,7 +137,7 @@ func (p *Pakku) handlePackage(action, manager, pkg string) error {
 	}
 }
 
-func (p *Pakku) writePackageToConfig(manager, pkg string) error {
+func (p *Pakku) addPackageToConfig(manager, pkg string) error {
 	switch manager {
 	case "apt":
 		if slices.Contains(p.config.Apt.Packages, pkg) {
