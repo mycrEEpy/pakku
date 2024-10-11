@@ -52,8 +52,6 @@ func (p *Pakku) Run(ctx context.Context) error {
 	default:
 		return fmt.Errorf("unknown command: %s", os.Args[1])
 	}
-
-	return nil
 }
 
 func (p *Pakku) printHelp() error {
