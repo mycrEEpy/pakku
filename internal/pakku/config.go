@@ -49,10 +49,7 @@ func parseConfigVersion(path string) (*ConfigVersion, error) {
 
 	var configVersion *ConfigVersion
 
-	decoder := yaml.NewDecoder(file)
-	decoder.KnownFields(true)
-
-	err = decoder.Decode(configVersion)
+	err = yaml.NewDecoder(file).Decode(configVersion)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode config file: %w", err)
 	}
