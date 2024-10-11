@@ -14,6 +14,7 @@ type ConfigVersion struct {
 
 type ConfigPackageManager struct {
 	Packages []string `yaml:"packages"`
+	Sudo     bool     `yaml:"sudo"`
 }
 
 type Config struct {

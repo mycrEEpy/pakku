@@ -226,7 +226,7 @@ func (p *Pakku) diffPackages(ctx context.Context) error {
 
 func (p *Pakku) applyPackages(ctx context.Context) error {
 	for _, pkg := range p.config.Apt.Packages {
-		err := installAptPackage(ctx, pkg)
+		err := installAptPackage(ctx, pkg, p.config.Apt.Sudo)
 		if err != nil {
 			return fmt.Errorf("failed to install package %s: %w", pkg, err)
 		}
