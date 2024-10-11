@@ -42,12 +42,9 @@ func (p *Pakku) Run(ctx context.Context) error {
 	switch os.Args[1] {
 	case "config":
 		return p.printConfig()
-	case "add":
+	case "add", "remove":
 		manager, pkg := parseManagerAndPackage()
-		return p.addPackage(manager, pkg)
-	case "remove":
-		manager, pkg := parseManagerAndPackage()
-		return p.removePackage(manager, pkg)
+		return p.handlePackage(os.Args[1], manager, pkg)
 	case "apply":
 		fmt.Println("apply not implemented")
 	default:
@@ -127,20 +124,19 @@ func (p *Pakku) initConfig() error {
 	return nil
 }
 
-func (p *Pakku) addPackage(manager, pkg string) error {
+func (p *Pakku) handlePackage(action, manager, pkg string) error {
 	if manager == "" || pkg == "" {
 		return errors.New("manager and package are required")
 	}
 
-	return p.writePackageToConfig(manager, pkg)
-}
-
-func (p *Pakku) removePackage(manager, pkg string) error {
-	if manager == "" || pkg == "" {
-		return errors.New("manager and package are required")
+	switch action {
+	case "add":
+		return p.writePackageToConfig(manager, pkg)
+	case "remove":
+		return p.removePackageFromConfig(manager, pkg)
+	default:
+		return fmt.Errorf("unknown package action: %s", action)
 	}
-
-	return p.removePackageFromConfig(manager, pkg)
 }
 
 func (p *Pakku) writePackageToConfig(manager, pkg string) error {
