@@ -18,10 +18,12 @@ func parseManagerAndPackage() (string, string) {
 func installAptPackage(ctx context.Context, pkg string, sudo bool) error {
 	fmt.Printf("Installing %s with apt...\n", pkg)
 
-	cmd := exec.CommandContext(ctx, "apt-get", "install", pkg)
+	var cmd *exec.Cmd
 
 	if sudo {
 		cmd = exec.CommandContext(ctx, "sudo", "apt-get", "install", pkg)
+	} else {
+		cmd = exec.CommandContext(ctx, "apt-get", "install", pkg)
 	}
 
 	out, err := cmd.CombinedOutput()
