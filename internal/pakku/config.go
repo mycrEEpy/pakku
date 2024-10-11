@@ -47,14 +47,14 @@ func parseConfigVersion(path string) (*ConfigVersion, error) {
 
 	defer file.Close()
 
-	var configVersion *ConfigVersion
+	var configVersion ConfigVersion
 
-	err = yaml.NewDecoder(file).Decode(configVersion)
+	err = yaml.NewDecoder(file).Decode(&configVersion)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode config file: %w", err)
 	}
 
-	return configVersion, nil
+	return &configVersion, nil
 }
 
 func parseConfig(path string) (*Config, error) {
@@ -65,15 +65,15 @@ func parseConfig(path string) (*Config, error) {
 
 	defer file.Close()
 
-	var config *Config
+	var config Config
 
 	decoder := yaml.NewDecoder(file)
 	decoder.KnownFields(true)
 
-	err = decoder.Decode(config)
+	err = decoder.Decode(&config)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode config file: %w", err)
 	}
 
-	return config, nil
+	return &config, nil
 }
