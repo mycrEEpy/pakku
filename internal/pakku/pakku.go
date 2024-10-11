@@ -30,7 +30,9 @@ func (p *Pakku) Run(ctx context.Context) error {
 		return p.printHelp()
 	}
 
-	if os.Args[1] == "init" {
+	command := os.Args[1]
+
+	if command == "init" {
 		return p.initConfig()
 	}
 
@@ -39,18 +41,18 @@ func (p *Pakku) Run(ctx context.Context) error {
 		return fmt.Errorf("failed to read config: %w", err)
 	}
 
-	switch os.Args[1] {
+	switch command {
 	case "config":
 		return p.printConfig()
 	case "add", "remove":
 		manager, pkg := parseManagerAndPackage(os.Args)
-		return p.handlePackage(os.Args[1], manager, pkg)
+		return p.handlePackage(command, manager, pkg)
 	case "diff":
 		return p.diffPackages(ctx)
 	case "apply":
 		return p.applyPackages(ctx)
 	default:
-		return fmt.Errorf("unknown command: %s", os.Args[1])
+		return fmt.Errorf("unknown command: %s", command)
 	}
 }
 
