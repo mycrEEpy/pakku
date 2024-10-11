@@ -3,16 +3,15 @@ package pakku
 import (
 	"context"
 	"fmt"
-	"os"
 	"os/exec"
 )
 
-func parseManagerAndPackage() (string, string) {
-	if len(os.Args) < 4 {
+func parseManagerAndPackage(args []string) (string, string) {
+	if len(args) < 4 {
 		return "", ""
 	}
 
-	return os.Args[2], os.Args[3]
+	return args[2], args[3]
 }
 
 func installAptPackage(ctx context.Context, pkg string, sudo bool) error {

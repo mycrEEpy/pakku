@@ -43,7 +43,7 @@ func (p *Pakku) Run(ctx context.Context) error {
 	case "config":
 		return p.printConfig()
 	case "add", "remove":
-		manager, pkg := parseManagerAndPackage()
+		manager, pkg := parseManagerAndPackage(os.Args)
 		return p.handlePackage(os.Args[1], manager, pkg)
 	case "diff":
 		return p.diffPackages(ctx)
