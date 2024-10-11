@@ -10,47 +10,41 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func Run(ctx context.Context, configPath string) error {
+type Pakku struct {
+	configPath    string
+	configVersion int
+	config        *Config
+}
+
+func New(configPath string) (*Pakku, error) {
+	absConfigPath, err := resolveAbsoluteConfigPath(configPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to resolve config path: %w", err)
+	}
+
+	return &Pakku{configPath: absConfigPath}, nil
+}
+
+func (p *Pakku) Run(ctx context.Context) error {
 	if len(os.Args) < 2 {
 		printHelp()
 		return nil
 	}
 
-	var err error
-
-	configPath, err = resolveAbsoluteConfigPath(configPath)
-	if err != nil {
-		return fmt.Errorf("failed to resolve config path: %w", err)
-	}
-
-	command := os.Args[1]
-
-	switch command {
-	case "init":
-		return initConfig(configPath)
+	switch os.Args[1] {
 	case "help":
 		printHelp()
 		return nil
+	case "init":
+		return p.initConfig()
 	}
 
-	version, err := parseConfigVersion(configPath)
+	err := p.readConfig()
 	if err != nil {
-		return fmt.Errorf("failed to parse config version: %w", err)
+		return fmt.Errorf("failed to read config: %w", err)
 	}
 
-	var _ *Config
-
-	switch version.Version {
-	case 0, 1:
-		_, err = parseConfig(configPath)
-		if err != nil {
-			return fmt.Errorf("failed to parse config: %w", err)
-		}
-	default:
-		return fmt.Errorf("unknown pakku config version %d", version.Version)
-	}
-
-	switch command {
+	switch os.Args[1] {
 	case "add":
 		fmt.Println("add not implemented")
 	case "remove":
@@ -74,18 +68,37 @@ func printHelp() {
 	fmt.Println("	apply				Install & remove packages")
 }
 
-func initConfig(configPath string) error {
-	err := os.MkdirAll(filepath.Dir(configPath), 0755)
+func (p *Pakku) readConfig() error {
+	version, err := parseConfigVersion(p.configPath)
+	if err != nil {
+		return fmt.Errorf("failed to parse config version: %w", err)
+	}
+
+	switch version.Version {
+	case 0, 1:
+		p.config, err = parseConfig(p.configPath)
+		if err != nil {
+			return fmt.Errorf("failed to parse config: %w", err)
+		}
+	default:
+		return fmt.Errorf("unknown pakku config version %d", version.Version)
+	}
+
+	return nil
+}
+
+func (p *Pakku) initConfig() error {
+	err := os.MkdirAll(filepath.Dir(p.configPath), 0755)
 	if err != nil {
 		return fmt.Errorf("failed to create config directory: %w", err)
 	}
 
-	_, err = os.Stat(configPath)
+	_, err = os.Stat(p.configPath)
 	if err == nil {
 		return errors.New("config file already exists")
 	}
 
-	file, err := os.Create(configPath)
+	file, err := os.Create(p.configPath)
 	if err != nil {
 		return fmt.Errorf("failed to create config file: %w", err)
 	}
@@ -99,7 +112,7 @@ func initConfig(configPath string) error {
 		return fmt.Errorf("failed to encode default config: %w", err)
 	}
 
-	fmt.Printf("Created new pakku config: %s\n", configPath)
+	fmt.Printf("Created new pakku config: %s\n", p.configPath)
 
 	return nil
 }

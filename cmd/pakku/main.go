@@ -31,7 +31,13 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
 
-	err := pakku.Run(ctx, *configPath)
+	p, err := pakku.New(*configPath)
+	if err != nil {
+		fmt.Printf("Error: %s\n", err)
+		os.Exit(1)
+	}
+
+	err = p.Run(ctx)
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 		os.Exit(1)
