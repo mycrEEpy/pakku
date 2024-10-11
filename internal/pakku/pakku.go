@@ -56,14 +56,6 @@ func (p *Pakku) Run(ctx context.Context) error {
 	return nil
 }
 
-func parseManagerAndPackage() (string, string) {
-	if len(os.Args) < 4 {
-		return "", ""
-	}
-
-	return os.Args[2], os.Args[3]
-}
-
 func (p *Pakku) printHelp() error {
 	fmt.Println("Usage: pakku <command>")
 	fmt.Println("Available commands:")
@@ -233,5 +225,12 @@ func (p *Pakku) diffPackages(ctx context.Context) error {
 }
 
 func (p *Pakku) applyPackages(ctx context.Context) error {
-	return errors.New("apply not implemented")
+	for _, pkg := range p.config.Apt.Packages {
+		err := installAptPackage(ctx, pkg)
+		if err != nil {
+			return fmt.Errorf("failed to install package %s: %w", pkg, err)
+		}
+	}
+
+	return nil
 }
