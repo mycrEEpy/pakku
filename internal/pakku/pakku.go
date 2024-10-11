@@ -45,8 +45,10 @@ func (p *Pakku) Run(ctx context.Context) error {
 	case "add", "remove":
 		manager, pkg := parseManagerAndPackage()
 		return p.handlePackage(os.Args[1], manager, pkg)
+	case "diff":
+		return p.diffPackages(ctx)
 	case "apply":
-		fmt.Println("apply not implemented")
+		return p.applyPackages(ctx)
 	default:
 		return fmt.Errorf("unknown command: %s", os.Args[1])
 	}
@@ -66,11 +68,12 @@ func (p *Pakku) printHelp() error {
 	fmt.Println("Usage: pakku <command>")
 	fmt.Println("Available commands:")
 	fmt.Println("	help				Show this help message")
-	fmt.Println("	init				Initialize a new pakku config")
-	fmt.Println("	config				Show current config")
-	fmt.Println("	add	<manager> <package>	Add a new package")
-	fmt.Println("	remove	<manager> <package>	Remove a package")
-	fmt.Println("	apply				Install & remove packages")
+	fmt.Println("	init				Initialize a new pakku configuration")
+	fmt.Println("	config				Show current configuration")
+	fmt.Println("	add	<manager> <package>	Add a new package to the configuration")
+	fmt.Println("	remove	<manager> <package>	Remove a package from the configuration")
+	fmt.Println("	diff				Show the differences between the configuration and the system")
+	fmt.Println("	apply				Apply the configuration to the system")
 
 	return nil
 }
@@ -231,4 +234,12 @@ func (p *Pakku) printConfig() error {
 	encoder := yaml.NewEncoder(os.Stdout)
 	encoder.SetIndent(2)
 	return encoder.Encode(p.config)
+}
+
+func (p *Pakku) diffPackages(ctx context.Context) error {
+	return errors.New("diff not implemented")
+}
+
+func (p *Pakku) applyPackages(ctx context.Context) error {
+	return errors.New("apply not implemented")
 }
