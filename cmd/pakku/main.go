@@ -25,7 +25,7 @@ func main() {
 
 	if *shouldPrintVersion {
 		printVersion()
-		os.Exit(0)
+		return
 	}
 
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
