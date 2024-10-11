@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 
 	"gopkg.in/yaml.v3"
 )
@@ -39,10 +40,14 @@ func (p *Pakku) Run(ctx context.Context) error {
 	}
 
 	switch os.Args[1] {
+	case "config":
+		return p.printConfig()
 	case "add":
-		fmt.Println("add not implemented")
+		manager, pkg := parseManagerAndPackage()
+		return p.addPackage(manager, pkg)
 	case "remove":
-		fmt.Println("remove not implemented")
+		manager, pkg := parseManagerAndPackage()
+		return p.removePackage(manager, pkg)
 	case "apply":
 		fmt.Println("apply not implemented")
 	default:
@@ -52,11 +57,20 @@ func (p *Pakku) Run(ctx context.Context) error {
 	return nil
 }
 
+func parseManagerAndPackage() (string, string) {
+	if len(os.Args) < 4 {
+		return "", ""
+	}
+
+	return os.Args[2], os.Args[3]
+}
+
 func (p *Pakku) printHelp() error {
 	fmt.Println("Usage: pakku <command>")
 	fmt.Println("Available commands:")
-	fmt.Println("	init				Initialize a new pakku config")
 	fmt.Println("	help				Show this help message")
+	fmt.Println("	init				Initialize a new pakku config")
+	fmt.Println("	config				Show current config")
 	fmt.Println("	add	<manager> <package>	Add a new package")
 	fmt.Println("	remove	<manager> <package>	Remove a package")
 	fmt.Println("	apply				Install & remove packages")
@@ -111,4 +125,114 @@ func (p *Pakku) initConfig() error {
 	fmt.Printf("Created new pakku config: %s\n", p.configPath)
 
 	return nil
+}
+
+func (p *Pakku) addPackage(manager, pkg string) error {
+	if manager == "" || pkg == "" {
+		return errors.New("manager and package are required")
+	}
+
+	return p.writePackageToConfig(manager, pkg)
+}
+
+func (p *Pakku) removePackage(manager, pkg string) error {
+	if manager == "" || pkg == "" {
+		return errors.New("manager and package are required")
+	}
+
+	return p.removePackageFromConfig(manager, pkg)
+}
+
+func (p *Pakku) writePackageToConfig(manager, pkg string) error {
+	switch manager {
+	case "apt":
+		if slices.Contains(p.config.Apt.Packages, pkg) {
+			return fmt.Errorf("package %s has already been added for %s", pkg, manager)
+		}
+
+		p.config.Apt.Packages = append(p.config.Apt.Packages, pkg)
+	case "brew":
+		if slices.Contains(p.config.Brew.Packages, pkg) {
+			return fmt.Errorf("package %s has already been added for %s", pkg, manager)
+		}
+
+		p.config.Brew.Packages = append(p.config.Brew.Packages, pkg)
+	case "dnf":
+		if slices.Contains(p.config.Dnf.Packages, pkg) {
+			return fmt.Errorf("package %s has already been added for %s", pkg, manager)
+		}
+
+		p.config.Dnf.Packages = append(p.config.Dnf.Packages, pkg)
+	case "pkgx":
+		if slices.Contains(p.config.Pkgx.Packages, pkg) {
+			return fmt.Errorf("package %s has already been added for %s", pkg, manager)
+		}
+
+		p.config.Pkgx.Packages = append(p.config.Pkgx.Packages, pkg)
+	default:
+		return fmt.Errorf("unsupported package manager: %s", manager)
+	}
+
+	file, err := os.Create(p.configPath)
+	if err != nil {
+		return fmt.Errorf("failed to open config file: %w", err)
+	}
+
+	defer file.Close()
+
+	return yaml.NewEncoder(file).Encode(p.config)
+}
+
+func (p *Pakku) removePackageFromConfig(manager, pkg string) error {
+	switch manager {
+	case "apt":
+		if !slices.Contains(p.config.Apt.Packages, pkg) {
+			return fmt.Errorf("package %s has not been added for %s", pkg, manager)
+		}
+
+		idx := slices.Index(p.config.Apt.Packages, pkg)
+
+		p.config.Apt.Packages = slices.Delete(p.config.Apt.Packages, idx, idx+1)
+	case "brew":
+		if !slices.Contains(p.config.Brew.Packages, pkg) {
+			return fmt.Errorf("package %s has not been added for %s", pkg, manager)
+		}
+
+		idx := slices.Index(p.config.Brew.Packages, pkg)
+
+		p.config.Brew.Packages = slices.Delete(p.config.Brew.Packages, idx, idx+1)
+	case "dnf":
+		if !slices.Contains(p.config.Dnf.Packages, pkg) {
+			return fmt.Errorf("package %s has not been added for %s", pkg, manager)
+		}
+
+		idx := slices.Index(p.config.Dnf.Packages, pkg)
+
+		p.config.Dnf.Packages = slices.Delete(p.config.Dnf.Packages, idx, idx+1)
+	case "pkgx":
+		if !slices.Contains(p.config.Pkgx.Packages, pkg) {
+			return fmt.Errorf("package %s has not been added for %s", pkg, manager)
+		}
+
+		idx := slices.Index(p.config.Brew.Packages, pkg)
+
+		p.config.Pkgx.Packages = slices.Delete(p.config.Pkgx.Packages, idx, idx+1)
+	default:
+		return fmt.Errorf("unsupported package manager: %s", manager)
+	}
+
+	file, err := os.Create(p.configPath)
+	if err != nil {
+		return fmt.Errorf("failed to open config file: %w", err)
+	}
+
+	defer file.Close()
+
+	return yaml.NewEncoder(file).Encode(p.config)
+}
+
+func (p *Pakku) printConfig() error {
+	encoder := yaml.NewEncoder(os.Stdout)
+	encoder.SetIndent(2)
+	return encoder.Encode(p.config)
 }

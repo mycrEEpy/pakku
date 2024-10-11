@@ -23,7 +23,6 @@ type Config struct {
 	Brew ConfigPackageManager `yaml:"brew"`
 	Dnf  ConfigPackageManager `yaml:"dnf"`
 	Pkgx ConfigPackageManager `yaml:"pkgx"`
-	Yum  ConfigPackageManager `yaml:"yum"`
 }
 
 func resolveAbsoluteConfigPath(configPath string) (string, error) {
