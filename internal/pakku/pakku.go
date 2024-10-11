@@ -25,16 +25,11 @@ func New(configPath string) (*Pakku, error) {
 }
 
 func (p *Pakku) Run(ctx context.Context) error {
-	if len(os.Args) < 2 {
-		printHelp()
-		return nil
+	if len(os.Args) < 2 || os.Args[1] == "help" {
+		return p.printHelp()
 	}
 
-	switch os.Args[1] {
-	case "help":
-		printHelp()
-		return nil
-	case "init":
+	if os.Args[1] == "init" {
 		return p.initConfig()
 	}
 
@@ -57,7 +52,7 @@ func (p *Pakku) Run(ctx context.Context) error {
 	return nil
 }
 
-func printHelp() {
+func (p *Pakku) printHelp() error {
 	fmt.Println("Usage: pakku <command>")
 	fmt.Println("Available commands:")
 	fmt.Println("	init				Initialize a new pakku config")
@@ -65,6 +60,8 @@ func printHelp() {
 	fmt.Println("	add	<manager> <package>	Add a new package")
 	fmt.Println("	remove	<manager> <package>	Remove a package")
 	fmt.Println("	apply				Install & remove packages")
+
+	return nil
 }
 
 func (p *Pakku) readConfig() error {
