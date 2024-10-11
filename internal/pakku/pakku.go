@@ -108,18 +108,13 @@ func (p *Pakku) initConfig() error {
 		return errors.New("config file already exists")
 	}
 
-	file, err := os.Create(p.configPath)
-	if err != nil {
-		return fmt.Errorf("failed to create config file: %w", err)
-	}
-
-	defaultConfig := Config{
+	p.config = &Config{
 		ConfigVersion: ConfigVersion{Version: 1},
 	}
 
-	err = yaml.NewEncoder(file).Encode(defaultConfig)
+	err = p.writeConfigToDisk()
 	if err != nil {
-		return fmt.Errorf("failed to encode default config: %w", err)
+		return fmt.Errorf("failed to write default config: %w", err)
 	}
 
 	fmt.Printf("Created new pakku config: %s\n", p.configPath)
@@ -172,14 +167,7 @@ func (p *Pakku) writePackageToConfig(manager, pkg string) error {
 		return fmt.Errorf("unsupported package manager: %s", manager)
 	}
 
-	file, err := os.Create(p.configPath)
-	if err != nil {
-		return fmt.Errorf("failed to open config file: %w", err)
-	}
-
-	defer file.Close()
-
-	return yaml.NewEncoder(file).Encode(p.config)
+	return p.writeConfigToDisk()
 }
 
 func (p *Pakku) removePackageFromConfig(manager, pkg string) error {
@@ -220,6 +208,10 @@ func (p *Pakku) removePackageFromConfig(manager, pkg string) error {
 		return fmt.Errorf("unsupported package manager: %s", manager)
 	}
 
+	return p.writeConfigToDisk()
+}
+
+func (p *Pakku) writeConfigToDisk() error {
 	file, err := os.Create(p.configPath)
 	if err != nil {
 		return fmt.Errorf("failed to open config file: %w", err)
