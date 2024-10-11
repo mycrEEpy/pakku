@@ -11,9 +11,8 @@ import (
 )
 
 type Pakku struct {
-	configPath    string
-	configVersion int
-	config        *Config
+	configPath string
+	config     *Config
 }
 
 func New(configPath string) (*Pakku, error) {
