@@ -8,12 +8,17 @@ import (
 	"path/filepath"
 	"slices"
 
+	"github.com/mycreepy/pakku/internal/manager"
 	"gopkg.in/yaml.v3"
 )
 
 type Pakku struct {
-	configPath string
-	config     *Config
+	configPath  string
+	config      *Config
+	AptManager  manager.Manager
+	BrewManager manager.Manager
+	DnfManager  manager.Manager
+	PkgxManager manager.Manager
 }
 
 func New(configPath string) (*Pakku, error) {
@@ -22,7 +27,13 @@ func New(configPath string) (*Pakku, error) {
 		return nil, fmt.Errorf("failed to resolve config path: %w", err)
 	}
 
-	return &Pakku{configPath: absConfigPath}, nil
+	return &Pakku{
+		configPath:  absConfigPath,
+		AptManager:  &manager.Apt{},
+		BrewManager: &manager.Brew{},
+		DnfManager:  &manager.Dnf{},
+		PkgxManager: &manager.Pkgx{},
+	}, nil
 }
 
 func (p *Pakku) Run(ctx context.Context) error {
@@ -45,12 +56,14 @@ func (p *Pakku) Run(ctx context.Context) error {
 	case "config":
 		return p.printConfig()
 	case "add", "remove":
-		manager, pkg := parseManagerAndPackage(os.Args)
-		return p.handlePackage(command, manager, pkg)
-	case "diff":
-		return p.diffPackages(ctx)
+		mgr, pkg := manager.ParseManagerAndPackage(os.Args)
+		return p.handlePackage(command, mgr, pkg)
 	case "apply":
 		return p.applyPackages(ctx)
+	case "plan":
+		return p.planPackages(ctx)
+	case "import":
+		return p.importPackages(ctx, manager.ParseManager(os.Args))
 	default:
 		return fmt.Errorf("unknown command: %s", command)
 	}
@@ -58,14 +71,23 @@ func (p *Pakku) Run(ctx context.Context) error {
 
 func (p *Pakku) printHelp() error {
 	fmt.Println("Usage: pakku <command>")
+	fmt.Println()
 	fmt.Println("Available commands:")
 	fmt.Println("	help				Show this help message")
 	fmt.Println("	init				Initialize a new pakku configuration")
 	fmt.Println("	config				Show current configuration")
 	fmt.Println("	add	<manager> <package>	Add a new package to the configuration")
 	fmt.Println("	remove	<manager> <package>	Remove a package from the configuration")
-	fmt.Println("	diff				Show the differences between the configuration and the system")
+	fmt.Println("	import	<manager>		Import all packages from the package manager to the configuration")
+	fmt.Println("	plan				Show the differences between the configuration and the system")
 	fmt.Println("	apply				Apply the configuration to the system")
+	fmt.Println()
+	fmt.Println("Supported package managers:")
+	fmt.Println("	apt")
+	fmt.Println("	brew")
+	fmt.Println("	dnf")
+	fmt.Println("	pkgx")
+	fmt.Println()
 
 	return nil
 }
@@ -220,17 +242,46 @@ func (p *Pakku) printConfig() error {
 	return encoder.Encode(p.config)
 }
 
-func (p *Pakku) diffPackages(ctx context.Context) error {
-	return errors.New("diff not implemented")
-}
-
 func (p *Pakku) applyPackages(ctx context.Context) error {
 	for _, pkg := range p.config.Apt.Packages {
-		err := installAptPackage(ctx, pkg, p.config.Apt.Sudo)
+		err := p.AptManager.InstallPackage(ctx, pkg, p.config.Apt.Sudo)
+		if err != nil {
+			return fmt.Errorf("failed to install package %s: %w", pkg, err)
+		}
+	}
+
+	for _, pkg := range p.config.Brew.Packages {
+		err := p.BrewManager.InstallPackage(ctx, pkg, p.config.Brew.Sudo)
+		if err != nil {
+			return fmt.Errorf("failed to install package %s: %w", pkg, err)
+		}
+	}
+
+	for _, pkg := range p.config.Dnf.Packages {
+		err := p.DnfManager.InstallPackage(ctx, pkg, p.config.Dnf.Sudo)
+		if err != nil {
+			return fmt.Errorf("failed to install package %s: %w", pkg, err)
+		}
+	}
+
+	for _, pkg := range p.config.Pkgx.Packages {
+		err := p.PkgxManager.InstallPackage(ctx, pkg, p.config.Pkgx.Sudo)
 		if err != nil {
 			return fmt.Errorf("failed to install package %s: %w", pkg, err)
 		}
 	}
 
 	return nil
+}
+
+func (p *Pakku) planPackages(ctx context.Context) error {
+	return errors.New("plan not implemented")
+}
+
+func (p *Pakku) importPackages(ctx context.Context, mgr string) error {
+	if mgr == "" {
+		return errors.New("no package manager specified")
+	}
+
+	return errors.New("import not implemented")
 }
