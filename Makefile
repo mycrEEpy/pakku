@@ -10,6 +10,9 @@ build: clean
 release: clean
 	goreleaser release --clean
 
+install: clean
+	go install ./cmd/pakku
+
 generate:
 	go generate ./...
 
