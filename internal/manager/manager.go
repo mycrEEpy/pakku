@@ -27,7 +27,7 @@ func ParseManagerAndPackage(args []string) (string, string) {
 }
 
 func installPackageWithManager(ctx context.Context, mgr, pkg string, sudo bool) error {
-	fmt.Printf("Installing %s with %s...\n", mgr, pkg)
+	fmt.Printf("Installing %s with %s...\n", pkg, mgr)
 
 	var cmd *exec.Cmd
 
