@@ -28,12 +28,12 @@ type Config struct {
 
 func resolveAbsoluteConfigPath(configPath string) (string, error) {
 	if len(configPath) == 0 {
-		homeDir, err := os.UserHomeDir()
+		cfgDir, err := os.UserConfigDir()
 		if err != nil {
-			return "", fmt.Errorf("failed to get user home directory: %w", err)
+			return "", fmt.Errorf("failed to get user config directory: %w", err)
 		}
 
-		return filepath.Join(homeDir, ".config", "pakku", "config.yml"), nil
+		return filepath.Join(cfgDir, "pakku", "config.yml"), nil
 	}
 
 	return filepath.Abs(configPath)
