@@ -13,9 +13,6 @@ release: clean
 install: clean
 	go install ./cmd/pakku
 
-generate:
-	go generate ./...
-
 lint:
 	golangci-lint run --timeout 5m
 
