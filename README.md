@@ -6,6 +6,8 @@
 
 `pakku` is a declarative approach to your system package managers.
 
+> `pakku` is not finished and still under active development.
+
 ## Installation
 
 You can download the pre-built binaries from the GitHub Releases or use various other installation methods.
