@@ -1,13 +1,15 @@
 package manager
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"os"
 	"os/exec"
 )
 
 type Manager interface {
-	InstallPackage(ctx context.Context, pkg string, sudo bool) error
+	InstallPackage(ctx context.Context, pkg string, sudo, verbose bool) error
 }
 
 func ParseManager(args []string) string {
@@ -26,7 +28,7 @@ func ParseManagerAndPackage(args []string) (string, string) {
 	return args[2], args[3]
 }
 
-func installPackageWithManager(ctx context.Context, mgr, pkg string, sudo bool) error {
+func installPackageWithManager(ctx context.Context, mgr, pkg string, sudo, verbose bool) error {
 	fmt.Printf("Installing %s with %s...\n", pkg, mgr)
 
 	var cmd *exec.Cmd
@@ -37,9 +39,19 @@ func installPackageWithManager(ctx context.Context, mgr, pkg string, sudo bool) 
 		cmd = exec.CommandContext(ctx, mgr, "install", pkg)
 	}
 
-	out, err := cmd.CombinedOutput()
+	var buf bytes.Buffer
+
+	if verbose {
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+	} else {
+		cmd.Stdout = &buf
+		cmd.Stderr = &buf
+	}
+
+	err := cmd.Run()
 	if err != nil {
-		fmt.Printf("Failed to install %s: %s\n", pkg, string(out))
+		fmt.Printf("Failed to install %s: %s\n", pkg, buf.String())
 		return err
 	}
 

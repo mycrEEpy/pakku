@@ -6,6 +6,6 @@ import (
 
 type Apt struct{}
 
-func (m *Apt) InstallPackage(ctx context.Context, pkg string, sudo bool) error {
-	return installPackageWithManager(ctx, "apt", pkg, sudo)
+func (m *Apt) InstallPackage(ctx context.Context, pkg string, sudo, verbose bool) error {
+	return installPackageWithManager(ctx, "apt", pkg, sudo, verbose)
 }

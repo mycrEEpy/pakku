@@ -3,6 +3,7 @@ package pakku
 import (
 	"context"
 	"errors"
+	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -243,29 +244,38 @@ func (p *Pakku) printConfig() error {
 }
 
 func (p *Pakku) applyPackages(ctx context.Context) error {
+	fs := flag.NewFlagSet("apply", flag.ExitOnError)
+
+	verbose := fs.Bool("verbose", false, "Show package manager output")
+
+	err := fs.Parse(os.Args[2:])
+	if err != nil {
+		return fmt.Errorf("failed to parse apply flags: %w", err)
+	}
+
 	for _, pkg := range p.config.Apt.Packages {
-		err := p.AptManager.InstallPackage(ctx, pkg, p.config.Apt.Sudo)
+		err := p.AptManager.InstallPackage(ctx, pkg, p.config.Apt.Sudo, *verbose)
 		if err != nil {
 			return fmt.Errorf("failed to install package %s: %w", pkg, err)
 		}
 	}
 
 	for _, pkg := range p.config.Brew.Packages {
-		err := p.BrewManager.InstallPackage(ctx, pkg, p.config.Brew.Sudo)
+		err := p.BrewManager.InstallPackage(ctx, pkg, p.config.Brew.Sudo, *verbose)
 		if err != nil {
 			return fmt.Errorf("failed to install package %s: %w", pkg, err)
 		}
 	}
 
 	for _, pkg := range p.config.Dnf.Packages {
-		err := p.DnfManager.InstallPackage(ctx, pkg, p.config.Dnf.Sudo)
+		err := p.DnfManager.InstallPackage(ctx, pkg, p.config.Dnf.Sudo, *verbose)
 		if err != nil {
 			return fmt.Errorf("failed to install package %s: %w", pkg, err)
 		}
 	}
 
 	for _, pkg := range p.config.Pkgx.Packages {
-		err := p.PkgxManager.InstallPackage(ctx, pkg, p.config.Pkgx.Sudo)
+		err := p.PkgxManager.InstallPackage(ctx, pkg, p.config.Pkgx.Sudo, *verbose)
 		if err != nil {
 			return fmt.Errorf("failed to install package %s: %w", pkg, err)
 		}

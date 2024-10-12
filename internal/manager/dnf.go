@@ -6,6 +6,6 @@ import (
 
 type Dnf struct{}
 
-func (m *Dnf) InstallPackage(ctx context.Context, pkg string, sudo bool) error {
-	return installPackageWithManager(ctx, "dnf", pkg, sudo)
+func (m *Dnf) InstallPackage(ctx context.Context, pkg string, sudo, verbose bool) error {
+	return installPackageWithManager(ctx, "dnf", pkg, sudo, verbose)
 }
