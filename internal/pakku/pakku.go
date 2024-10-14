@@ -234,7 +234,10 @@ func (p *Pakku) writeConfigToDisk() error {
 
 	defer file.Close()
 
-	return yaml.NewEncoder(file).Encode(p.config)
+	encoder := yaml.NewEncoder(file)
+	encoder.SetIndent(2)
+
+	return encoder.Encode(p.config)
 }
 
 func (p *Pakku) printConfig() error {
