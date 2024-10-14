@@ -61,10 +61,10 @@ func (p *Pakku) Run(ctx context.Context) error {
 		return p.handlePackage(command, mgr, pkg)
 	case "apply":
 		return p.applyPackages(ctx)
-	case "plan":
-		return p.planPackages(ctx)
-	case "import":
-		return p.importPackages(ctx, manager.ParseManager(os.Args))
+	//case "plan":
+	//	return p.planPackages(ctx)
+	//case "import":
+	//	return p.importPackages(ctx, manager.ParseManager(os.Args))
 	default:
 		return fmt.Errorf("unknown command: %s", command)
 	}
@@ -74,14 +74,14 @@ func (p *Pakku) printHelp() error {
 	fmt.Println("Usage: pakku <command>")
 	fmt.Println()
 	fmt.Println("Available commands:")
-	fmt.Println("	help				Show this help message")
 	fmt.Println("	init				Initialize a new pakku configuration")
 	fmt.Println("	config				Show current configuration")
 	fmt.Println("	add	<manager> <package>	Add a new package to the configuration")
 	fmt.Println("	remove	<manager> <package>	Remove a package from the configuration")
-	fmt.Println("	import	<manager>		Import all packages from the package manager to the configuration")
-	fmt.Println("	plan				Show the differences between the configuration and the system")
+	//fmt.Println("	import	<manager>		Import all packages from the package manager to the configuration")
+	//fmt.Println("	plan				Show the differences between the configuration and the system")
 	fmt.Println("	apply				Apply the configuration to the system")
+	fmt.Println("	help				Show this help message")
 	fmt.Println()
 	fmt.Println("Supported package managers:")
 	fmt.Println("	apt")
