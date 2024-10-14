@@ -15,7 +15,7 @@ You can download the pre-built binaries from the GitHub Releases or use various 
 Using Go:
 
 ```shell
-go install github.com/mycreepy/pakku@latest
+go install github.com/mycreepy/pakku/cmd/pakku@latest
 ```
 
 Using Pkgx:
