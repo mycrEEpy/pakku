@@ -241,13 +241,28 @@ func (p *Pakku) writeConfigToDisk() error {
 }
 
 func (p *Pakku) printConfig() error {
+	fs := flag.NewFlagSet("pakku config", flag.ExitOnError)
+
+	printPath := fs.Bool("path", false, "Show path to configuration file")
+
+	err := fs.Parse(os.Args[2:])
+	if err != nil {
+		return fmt.Errorf("failed to parse config flags: %w", err)
+	}
+
+	if *printPath {
+		fmt.Println(p.configPath)
+		return nil
+	}
+
 	encoder := yaml.NewEncoder(os.Stdout)
 	encoder.SetIndent(2)
+
 	return encoder.Encode(p.config)
 }
 
 func (p *Pakku) applyPackages(ctx context.Context) error {
-	fs := flag.NewFlagSet("apply", flag.ExitOnError)
+	fs := flag.NewFlagSet("pakku apply", flag.ExitOnError)
 
 	verbose := fs.Bool("verbose", false, "Show package manager output")
 
