@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -13,7 +12,6 @@ import (
 )
 
 var (
-	configPath         string
 	shouldPrintVersion bool
 
 	version = "develop"
@@ -22,7 +20,9 @@ var (
 )
 
 func main() {
-	mustParseFlags()
+	flag.BoolVar(&shouldPrintVersion, "version", false, "Show version")
+
+	flag.Parse()
 
 	if shouldPrintVersion {
 		printVersion()
@@ -41,23 +41,6 @@ func main() {
 	err = p.Run(ctx)
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
-		os.Exit(1)
-	}
-}
-
-func mustParseFlags() {
-	fs := flag.NewFlagSet("pakku", flag.ExitOnError)
-
-	fs.BoolVar(&shouldPrintVersion, "version", false, "Show version")
-
-	err := fs.Parse(os.Args[flag.NArg()+1:])
-	if err != nil {
-		if errors.Is(err, flag.ErrHelp) {
-			fs.PrintDefaults()
-			os.Exit(0)
-		}
-
-		fmt.Printf("%s\n", err)
 		os.Exit(1)
 	}
 }
