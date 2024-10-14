@@ -28,15 +28,13 @@ func ParseManagerAndPackage(args []string) (string, string) {
 	return args[2], args[3]
 }
 
-func installPackageWithManager(ctx context.Context, mgr, pkg string, sudo, verbose bool) error {
-	fmt.Printf("Installing %s with %s...\n", pkg, mgr)
-
+func runCommand(ctx context.Context, cmdAndArgs []string, sudo, verbose bool) error {
 	var cmd *exec.Cmd
 
 	if sudo {
-		cmd = exec.CommandContext(ctx, "sudo", mgr, "install", pkg)
+		cmd = exec.CommandContext(ctx, "sudo", cmdAndArgs...)
 	} else {
-		cmd = exec.CommandContext(ctx, mgr, "install", pkg)
+		cmd = exec.CommandContext(ctx, cmdAndArgs[0], cmdAndArgs[1:]...)
 	}
 
 	var buf bytes.Buffer
@@ -51,7 +49,7 @@ func installPackageWithManager(ctx context.Context, mgr, pkg string, sudo, verbo
 
 	err := cmd.Run()
 	if err != nil {
-		fmt.Printf("Failed to install %s: %s\n", pkg, buf.String())
+		fmt.Printf("Command failed: %s\n", buf.String())
 		return err
 	}
 
