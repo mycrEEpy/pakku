@@ -216,7 +216,7 @@ func (p *Pakku) removePackageFromConfig(manager, pkg string) error {
 			return fmt.Errorf("package %s has not been added for %s", pkg, manager)
 		}
 
-		idx := slices.Index(p.config.Brew.Packages, pkg)
+		idx := slices.Index(p.config.Pkgx.Packages, pkg)
 
 		p.config.Pkgx.Packages = slices.Delete(p.config.Pkgx.Packages, idx, idx+1)
 	default:
