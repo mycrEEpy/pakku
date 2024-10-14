@@ -287,14 +287,14 @@ func (p *Pakku) applyPackages(ctx context.Context) error {
 	return nil
 }
 
-func (p *Pakku) planPackages(ctx context.Context) error {
-	return errors.New("plan not implemented")
-}
-
-func (p *Pakku) importPackages(ctx context.Context, mgr string) error {
-	if mgr == "" {
-		return errors.New("no package manager specified")
-	}
-
-	return errors.New("import not implemented")
-}
+//func (p *Pakku) planPackages(ctx context.Context) error {
+//	return errors.New("plan not implemented")
+//}
+//
+//func (p *Pakku) importPackages(ctx context.Context, mgr string) error {
+//	if mgr == "" {
+//		return errors.New("no package manager specified")
+//	}
+//
+//	return errors.New("import not implemented")
+//}
