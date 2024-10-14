@@ -10,6 +10,7 @@ import (
 
 type Manager interface {
 	InstallPackage(ctx context.Context, pkg string, sudo, verbose bool) error
+	UpdatePackages(ctx context.Context, sudo, verbose bool) error
 }
 
 func ParseManager(args []string) string {
@@ -49,7 +50,10 @@ func runCommand(ctx context.Context, cmdAndArgs []string, sudo, verbose bool) er
 
 	err := cmd.Run()
 	if err != nil {
-		fmt.Printf("Command failed: %s\n", buf.String())
+		if buf.Len() > 0 {
+			fmt.Printf("Command failed: %s\n", buf.String())
+		}
+
 		return err
 	}
 

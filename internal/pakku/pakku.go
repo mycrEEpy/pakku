@@ -59,6 +59,9 @@ func (p *Pakku) Run(ctx context.Context) error {
 	case "add", "remove":
 		mgr, pkg := manager.ParseManagerAndPackage(os.Args)
 		return p.handlePackage(command, mgr, pkg)
+	case "update":
+		mgr := manager.ParseManager(os.Args)
+		return p.applyUpdate(ctx, mgr)
 	case "apply":
 		return p.applyPackages(ctx)
 	//case "plan":
@@ -78,6 +81,7 @@ func (p *Pakku) printHelp() error {
 	fmt.Println("	config				Show current configuration")
 	fmt.Println("	add	<manager> <package>	Add a new package to the configuration")
 	fmt.Println("	remove	<manager> <package>	Remove a package from the configuration")
+	fmt.Println("	update	<manager>		Update all packages for manager")
 	//fmt.Println("	import	<manager>		Import all packages from the package manager to the configuration")
 	//fmt.Println("	plan				Show the differences between the configuration and the system")
 	fmt.Println("	apply				Apply the configuration to the system")
@@ -300,6 +304,34 @@ func (p *Pakku) applyPackages(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func (p *Pakku) applyUpdate(ctx context.Context, mgr string) error {
+	if mgr == "" {
+		return errors.New("no package manager specified")
+	}
+
+	fs := flag.NewFlagSet("pakku update", flag.ExitOnError)
+
+	verbose := fs.Bool("verbose", false, "Show package manager output")
+
+	err := fs.Parse(os.Args[3:])
+	if err != nil {
+		return fmt.Errorf("failed to parse update flags: %w", err)
+	}
+
+	switch mgr {
+	case "apt":
+		return p.AptManager.UpdatePackages(ctx, p.config.Apt.Sudo, *verbose)
+	case "brew":
+		return p.BrewManager.UpdatePackages(ctx, p.config.Brew.Sudo, *verbose)
+	case "dnf":
+		return p.DnfManager.UpdatePackages(ctx, p.config.Dnf.Sudo, *verbose)
+	case "pkgx":
+		return p.PkgxManager.UpdatePackages(ctx, p.config.Pkgx.Sudo, *verbose)
+	default:
+		return fmt.Errorf("unsupported package manager: %s", mgr)
+	}
 }
 
 //func (p *Pakku) planPackages(ctx context.Context) error {
