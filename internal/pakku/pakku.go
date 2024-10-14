@@ -22,8 +22,8 @@ type Pakku struct {
 	PkgxManager manager.Manager
 }
 
-func New(configPath string) (*Pakku, error) {
-	absConfigPath, err := resolveAbsoluteConfigPath(configPath)
+func New() (*Pakku, error) {
+	absConfigPath, err := resolveAbsoluteConfigPath()
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve config path: %w", err)
 	}

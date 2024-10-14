@@ -32,7 +32,7 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
 
-	p, err := pakku.New(configPath)
+	p, err := pakku.New()
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 		os.Exit(1)
@@ -48,7 +48,6 @@ func main() {
 func mustParseFlags() {
 	fs := flag.NewFlagSet("pakku", flag.ExitOnError)
 
-	fs.StringVar(&configPath, "config", "", "Path to pakku config file (defaults to $HOME/.config/pakku/config.yml)")
 	fs.BoolVar(&shouldPrintVersion, "version", false, "Show version")
 
 	err := fs.Parse(os.Args[flag.NArg()+1:])

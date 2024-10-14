@@ -26,8 +26,8 @@ type Config struct {
 	Pkgx ConfigPackageManager `yaml:"pkgx"`
 }
 
-func resolveAbsoluteConfigPath(configPath string) (string, error) {
-	if len(configPath) == 0 {
+func resolveAbsoluteConfigPath() (string, error) {
+	if _, found := os.LookupEnv("PAKKU_CONFIG"); !found {
 		cfgDir, err := os.UserConfigDir()
 		if err != nil {
 			return "", fmt.Errorf("failed to get user config directory: %w", err)
@@ -36,7 +36,7 @@ func resolveAbsoluteConfigPath(configPath string) (string, error) {
 		return filepath.Join(cfgDir, "pakku", "config.yml"), nil
 	}
 
-	return filepath.Abs(configPath)
+	return filepath.Abs(os.Getenv("PAKKU_CONFIG"))
 }
 
 func parseConfigVersion(path string) (*ConfigVersion, error) {
