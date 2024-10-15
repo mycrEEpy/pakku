@@ -176,24 +176,32 @@ func (p *Pakku) addPackageToConfig(manager, pkg string) error {
 		}
 
 		p.config.Apt.Packages = append(p.config.Apt.Packages, pkg)
+
+		slices.Sort(p.config.Apt.Packages)
 	case "brew":
 		if slices.Contains(p.config.Brew.Packages, pkg) {
 			return fmt.Errorf("package %s has already been added for %s", pkg, manager)
 		}
 
 		p.config.Brew.Packages = append(p.config.Brew.Packages, pkg)
+
+		slices.Sort(p.config.Brew.Packages)
 	case "dnf":
 		if slices.Contains(p.config.Dnf.Packages, pkg) {
 			return fmt.Errorf("package %s has already been added for %s", pkg, manager)
 		}
 
 		p.config.Dnf.Packages = append(p.config.Dnf.Packages, pkg)
+
+		slices.Sort(p.config.Dnf.Packages)
 	case "pkgx":
 		if slices.Contains(p.config.Pkgx.Packages, pkg) {
 			return fmt.Errorf("package %s has already been added for %s", pkg, manager)
 		}
 
 		p.config.Pkgx.Packages = append(p.config.Pkgx.Packages, pkg)
+
+		slices.Sort(p.config.Pkgx.Packages)
 	default:
 		return fmt.Errorf("unsupported package manager: %s", manager)
 	}
