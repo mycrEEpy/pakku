@@ -28,13 +28,20 @@ func New() (*Pakku, error) {
 		return nil, fmt.Errorf("failed to resolve config path: %w", err)
 	}
 
-	return &Pakku{
-		configPath:  absConfigPath,
-		AptManager:  &manager.Apt{},
-		BrewManager: &manager.Brew{},
-		DnfManager:  &manager.Dnf{},
-		PkgxManager: &manager.Pkgx{},
-	}, nil
+	return &Pakku{configPath: absConfigPath}, nil
+}
+
+func (p *Pakku) setupManagers() error {
+	if p.config == nil {
+		return errors.New("config not loaded")
+	}
+
+	p.AptManager = &manager.Apt{Packages: p.config.Apt.Packages, Sudo: p.config.Apt.Sudo}
+	p.BrewManager = &manager.Brew{Packages: p.config.Brew.Packages, Sudo: p.config.Brew.Sudo}
+	p.DnfManager = &manager.Dnf{Packages: p.config.Dnf.Packages, Sudo: p.config.Dnf.Sudo}
+	p.PkgxManager = &manager.Pkgx{Packages: p.config.Pkgx.Packages, Sudo: p.config.Pkgx.Sudo}
+
+	return nil
 }
 
 func (p *Pakku) Run(ctx context.Context) error {
@@ -51,6 +58,11 @@ func (p *Pakku) Run(ctx context.Context) error {
 	err := p.readConfig()
 	if err != nil {
 		return fmt.Errorf("failed to read config: %w", err)
+	}
+
+	err = p.setupManagers()
+	if err != nil {
+		return fmt.Errorf("failed to setup package managers: %w", err)
 	}
 
 	switch command {
@@ -275,32 +287,24 @@ func (p *Pakku) applyPackages(ctx context.Context) error {
 		return fmt.Errorf("failed to parse apply flags: %w", err)
 	}
 
-	for _, pkg := range p.config.Apt.Packages {
-		err := p.AptManager.InstallPackage(ctx, pkg, p.config.Apt.Sudo, *verbose)
-		if err != nil {
-			return fmt.Errorf("failed to install package %s: %w", pkg, err)
-		}
+	err = p.AptManager.InstallPackages(ctx, *verbose)
+	if err != nil {
+		return fmt.Errorf("failed to install packages for apt: %w", err)
 	}
 
-	for _, pkg := range p.config.Brew.Packages {
-		err := p.BrewManager.InstallPackage(ctx, pkg, p.config.Brew.Sudo, *verbose)
-		if err != nil {
-			return fmt.Errorf("failed to install package %s: %w", pkg, err)
-		}
+	err = p.BrewManager.InstallPackages(ctx, *verbose)
+	if err != nil {
+		return fmt.Errorf("failed to install packages for brew: %w", err)
 	}
 
-	for _, pkg := range p.config.Dnf.Packages {
-		err := p.DnfManager.InstallPackage(ctx, pkg, p.config.Dnf.Sudo, *verbose)
-		if err != nil {
-			return fmt.Errorf("failed to install package %s: %w", pkg, err)
-		}
+	err = p.DnfManager.InstallPackages(ctx, *verbose)
+	if err != nil {
+		return fmt.Errorf("failed to install packages for dnf: %w", err)
 	}
 
-	for _, pkg := range p.config.Pkgx.Packages {
-		err := p.PkgxManager.InstallPackage(ctx, pkg, p.config.Pkgx.Sudo, *verbose)
-		if err != nil {
-			return fmt.Errorf("failed to install package %s: %w", pkg, err)
-		}
+	err = p.PkgxManager.InstallPackages(ctx, *verbose)
+	if err != nil {
+		return fmt.Errorf("failed to install packages for pkgx: %w", err)
 	}
 
 	return nil
@@ -327,21 +331,21 @@ func (p *Pakku) applyUpdate(ctx context.Context, mgr string) error {
 			return nil
 		}
 
-		return p.AptManager.UpdatePackages(ctx, p.config.Apt.Packages, p.config.Apt.Sudo, *verbose)
+		return p.AptManager.UpdatePackages(ctx, *verbose)
 	case "brew":
 		if len(p.config.Brew.Packages) == 0 {
 			fmt.Println("No packages to update for brew")
 			return nil
 		}
 
-		return p.BrewManager.UpdatePackages(ctx, p.config.Brew.Packages, p.config.Brew.Sudo, *verbose)
+		return p.BrewManager.UpdatePackages(ctx, *verbose)
 	case "dnf":
 		if len(p.config.Dnf.Packages) == 0 {
 			fmt.Println("No packages to update for dnf")
 			return nil
 		}
 
-		return p.DnfManager.UpdatePackages(ctx, p.config.Dnf.Packages, p.config.Dnf.Sudo, *verbose)
+		return p.DnfManager.UpdatePackages(ctx, *verbose)
 	case "pkgx":
 		return errors.New("update currently not supported for pkgx")
 	default:

@@ -5,14 +5,24 @@ import (
 	"fmt"
 )
 
-type Pkgx struct{}
-
-func (m *Pkgx) InstallPackage(ctx context.Context, pkg string, sudo, verbose bool) error {
-	fmt.Printf("Installing %s with pkgx...\n", pkg)
-
-	return runCommand(ctx, []string{"pkgx", "install", pkg}, sudo, verbose)
+type Pkgx struct {
+	Packages []string
+	Sudo     bool
 }
 
-func (m *Pkgx) UpdatePackages(_ context.Context, _ []string, _, _ bool) error {
+func (m *Pkgx) InstallPackages(ctx context.Context, verbose bool) error {
+	for _, pkg := range m.Packages {
+		fmt.Printf("Installing %s with pkgx...\n", pkg)
+
+		err := runCommand(ctx, []string{"pkgx", "install", pkg}, m.Sudo, verbose)
+		if err != nil {
+			return fmt.Errorf("failed to install %s: %w", pkg, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *Pkgx) UpdatePackages(_ context.Context, _ bool) error {
 	return nil
 }
