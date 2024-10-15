@@ -10,7 +10,7 @@
 
 ## Installation
 
-You can download the pre-built binaries from the GitHub Releases or use various other installation methods.
+You can download the pre-built binaries from the [GitHub Releases](https://github.com/mycrEEpy/pakku/releases) or use various other installation methods.
 
 Using Go:
 
