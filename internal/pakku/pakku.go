@@ -322,13 +322,28 @@ func (p *Pakku) applyUpdate(ctx context.Context, mgr string) error {
 
 	switch mgr {
 	case "apt":
-		return p.AptManager.UpdatePackages(ctx, p.config.Apt.Sudo, *verbose)
+		if len(p.config.Apt.Packages) == 0 {
+			fmt.Println("No packages to update for apt")
+			return nil
+		}
+
+		return p.AptManager.UpdatePackages(ctx, p.config.Apt.Packages, p.config.Apt.Sudo, *verbose)
 	case "brew":
-		return p.BrewManager.UpdatePackages(ctx, p.config.Brew.Sudo, *verbose)
+		if len(p.config.Brew.Packages) == 0 {
+			fmt.Println("No packages to update for brew")
+			return nil
+		}
+
+		return p.BrewManager.UpdatePackages(ctx, p.config.Brew.Packages, p.config.Brew.Sudo, *verbose)
 	case "dnf":
-		return p.DnfManager.UpdatePackages(ctx, p.config.Dnf.Sudo, *verbose)
+		if len(p.config.Dnf.Packages) == 0 {
+			fmt.Println("No packages to update for dnf")
+			return nil
+		}
+
+		return p.DnfManager.UpdatePackages(ctx, p.config.Dnf.Packages, p.config.Dnf.Sudo, *verbose)
 	case "pkgx":
-		return p.PkgxManager.UpdatePackages(ctx, p.config.Pkgx.Sudo, *verbose)
+		return errors.New("update currently not supported for pkgx")
 	default:
 		return fmt.Errorf("unsupported package manager: %s", mgr)
 	}

@@ -13,8 +13,8 @@ func (m *Dnf) InstallPackage(ctx context.Context, pkg string, sudo, verbose bool
 	return runCommand(ctx, []string{"dnf", "install", "--yes", pkg}, sudo, verbose)
 }
 
-func (m *Dnf) UpdatePackages(ctx context.Context, sudo, verbose bool) error {
+func (m *Dnf) UpdatePackages(ctx context.Context, pkgs []string, sudo, verbose bool) error {
 	fmt.Println("Updating packages with dnf...")
 
-	return runCommand(ctx, []string{"dnf", "upgrade", "--yes"}, sudo, verbose)
+	return runCommand(ctx, append([]string{"dnf", "upgrade", "--yes"}, pkgs...), sudo, verbose)
 }

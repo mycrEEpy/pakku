@@ -10,7 +10,7 @@ import (
 
 type Manager interface {
 	InstallPackage(ctx context.Context, pkg string, sudo, verbose bool) error
-	UpdatePackages(ctx context.Context, sudo, verbose bool) error
+	UpdatePackages(ctx context.Context, pkgs []string, sudo, verbose bool) error
 }
 
 func ParseManager(args []string) string {

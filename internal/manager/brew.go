@@ -13,8 +13,8 @@ func (m *Brew) InstallPackage(ctx context.Context, pkg string, sudo, verbose boo
 	return runCommand(ctx, []string{"brew", "install", pkg}, sudo, verbose)
 }
 
-func (m *Brew) UpdatePackages(ctx context.Context, sudo, verbose bool) error {
+func (m *Brew) UpdatePackages(ctx context.Context, pkgs []string, sudo, verbose bool) error {
 	fmt.Println("Updating packages with brew...")
 
-	return runCommand(ctx, []string{"brew", "upgrade"}, sudo, verbose)
+	return runCommand(ctx, append([]string{"brew", "upgrade"}, pkgs...), sudo, verbose)
 }
