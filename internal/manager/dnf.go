@@ -24,6 +24,10 @@ func (m *Dnf) InstallPackages(ctx context.Context, verbose bool) error {
 }
 
 func (m *Dnf) UpdatePackages(ctx context.Context, verbose bool) error {
+	if len(m.Packages) == 0 {
+		return nil
+	}
+
 	fmt.Println("Updating packages with dnf...")
 
 	return runCommand(ctx, append([]string{"dnf", "upgrade", "--yes"}, m.Packages...), m.Sudo, verbose)

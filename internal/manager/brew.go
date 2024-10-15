@@ -24,6 +24,10 @@ func (m *Brew) InstallPackages(ctx context.Context, verbose bool) error {
 }
 
 func (m *Brew) UpdatePackages(ctx context.Context, verbose bool) error {
+	if len(m.Packages) == 0 {
+		return nil
+	}
+
 	fmt.Println("Updating packages with brew...")
 
 	return runCommand(ctx, append([]string{"brew", "upgrade"}, m.Packages...), m.Sudo, verbose)

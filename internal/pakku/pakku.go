@@ -72,8 +72,7 @@ func (p *Pakku) Run(ctx context.Context) error {
 		mgr, pkg := manager.ParseManagerAndPackage(os.Args)
 		return p.handlePackage(command, mgr, pkg)
 	case "update":
-		mgr := manager.ParseManager(os.Args)
-		return p.applyUpdate(ctx, mgr)
+		return p.applyUpdate(ctx)
 	case "apply":
 		return p.applyPackages(ctx)
 	//case "plan":
@@ -93,7 +92,7 @@ func (p *Pakku) printHelp() error {
 	fmt.Println("	config				Show current configuration")
 	fmt.Println("	add	<manager> <package>	Add a new package to the configuration")
 	fmt.Println("	remove	<manager> <package>	Remove a package from the configuration")
-	fmt.Println("	update	<manager>		Update all packages for manager")
+	fmt.Println("	update				Update all packages in the configuration")
 	//fmt.Println("	import	<manager>		Import all packages from the package manager to the configuration")
 	//fmt.Println("	plan				Show the differences between the configuration and the system")
 	fmt.Println("	apply				Apply the configuration to the system")
@@ -318,47 +317,37 @@ func (p *Pakku) applyPackages(ctx context.Context) error {
 	return nil
 }
 
-func (p *Pakku) applyUpdate(ctx context.Context, mgr string) error {
-	if mgr == "" {
-		return errors.New("no package manager specified")
-	}
-
+func (p *Pakku) applyUpdate(ctx context.Context) error {
 	fs := flag.NewFlagSet("pakku update", flag.ExitOnError)
 
 	verbose := fs.Bool("verbose", false, "Show package manager output")
 
-	err := fs.Parse(os.Args[3:])
+	err := fs.Parse(os.Args[2:])
 	if err != nil {
 		return fmt.Errorf("failed to parse update flags: %w", err)
 	}
 
-	switch mgr {
-	case "apt":
-		if len(p.config.Apt.Packages) == 0 {
-			fmt.Println("No packages to update for apt")
-			return nil
-		}
-
-		return p.AptManager.UpdatePackages(ctx, *verbose)
-	case "brew":
-		if len(p.config.Brew.Packages) == 0 {
-			fmt.Println("No packages to update for brew")
-			return nil
-		}
-
-		return p.BrewManager.UpdatePackages(ctx, *verbose)
-	case "dnf":
-		if len(p.config.Dnf.Packages) == 0 {
-			fmt.Println("No packages to update for dnf")
-			return nil
-		}
-
-		return p.DnfManager.UpdatePackages(ctx, *verbose)
-	case "pkgx":
-		return errors.New("update currently not supported for pkgx")
-	default:
-		return fmt.Errorf("unsupported package manager: %s", mgr)
+	err = p.AptManager.UpdatePackages(ctx, *verbose)
+	if err != nil {
+		return fmt.Errorf("failed to update packages for apt: %w", err)
 	}
+
+	err = p.BrewManager.UpdatePackages(ctx, *verbose)
+	if err != nil {
+		return fmt.Errorf("failed to update packages for brew: %w", err)
+	}
+
+	err = p.DnfManager.UpdatePackages(ctx, *verbose)
+	if err != nil {
+		return fmt.Errorf("failed to update packages for dnf: %w", err)
+	}
+
+	err = p.PkgxManager.UpdatePackages(ctx, *verbose)
+	if err != nil {
+		return fmt.Errorf("failed to update packages for pkgx: %w", err)
+	}
+
+	return nil
 }
 
 //func (p *Pakku) planPackages(ctx context.Context) error {

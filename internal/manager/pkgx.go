@@ -24,5 +24,11 @@ func (m *Pkgx) InstallPackages(ctx context.Context, verbose bool) error {
 }
 
 func (m *Pkgx) UpdatePackages(_ context.Context, _ bool) error {
+	if len(m.Packages) == 0 {
+		return nil
+	}
+
+	fmt.Println("Updating packages with pkgx is currently not supported...")
+
 	return nil
 }

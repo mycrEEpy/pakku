@@ -24,6 +24,10 @@ func (m *Apt) InstallPackages(ctx context.Context, verbose bool) error {
 }
 
 func (m *Apt) UpdatePackages(ctx context.Context, verbose bool) error {
+	if len(m.Packages) == 0 {
+		return nil
+	}
+
 	fmt.Println("Updating packages with apt...")
 
 	err := runCommand(ctx, []string{"apt-get", "update"}, m.Sudo, verbose)
