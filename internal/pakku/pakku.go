@@ -92,10 +92,11 @@ func (p *Pakku) printHelp() error {
 	fmt.Println("	config				Show current configuration")
 	fmt.Println("	add	<manager> <package>	Add a new package to the configuration")
 	fmt.Println("	remove	<manager> <package>	Remove a package from the configuration")
-	fmt.Println("	update				Update all packages in the configuration")
+
 	//fmt.Println("	import	<manager>		Import all packages from the package manager to the configuration")
 	//fmt.Println("	plan				Show the differences between the configuration and the system")
 	fmt.Println("	apply				Apply the configuration to the system")
+	fmt.Println("	update				Update all packages in the configuration")
 	fmt.Println("	help				Show this help message")
 	fmt.Println()
 	fmt.Println("Supported package managers:")
