@@ -30,5 +30,5 @@ func (m *Dnf) UpdatePackages(ctx context.Context, verbose bool) error {
 
 	fmt.Println("Updating packages with dnf...")
 
-	return runCommand(ctx, append([]string{"dnf", "--yes", "upgrade"}, m.Packages...), m.Sudo, verbose)
+	return runCommand(ctx, append([]string{"dnf", "--assumeyes", "upgrade"}, m.Packages...), m.Sudo, verbose)
 }
