@@ -14,7 +14,7 @@ func (m *Dnf) InstallPackages(ctx context.Context, verbose bool) error {
 	for _, pkg := range m.Packages {
 		fmt.Printf("Installing %s with dnf...\n", pkg)
 
-		err := runCommand(ctx, []string{"dnf", "--yes", "install", pkg}, m.Sudo, verbose)
+		err := runCommand(ctx, []string{"dnf", "--assumeyes", "install", pkg}, m.Sudo, verbose)
 		if err != nil {
 			return fmt.Errorf("failed to install %s: %w", pkg, err)
 		}
