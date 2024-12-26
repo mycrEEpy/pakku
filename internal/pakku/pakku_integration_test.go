@@ -75,8 +75,8 @@ func TestDnf(t *testing.T) {
 
 	mustSucceed(t, container, []string{"pakku", "init"})
 	mustSucceed(t, container, []string{"pakku", "config"})
-	mustSucceed(t, container, []string{"pakku", "add", "apt", "vim"})
+	mustSucceed(t, container, []string{"pakku", "add", "dnf", "vim"})
 	mustSucceed(t, container, []string{"pakku", "apply"})
 	mustSucceed(t, container, []string{"pakku", "update"})
-	mustSucceed(t, container, []string{"pakku", "remove", "apt", "vim"})
+	mustSucceed(t, container, []string{"pakku", "remove", "dnf", "vim"})
 }
