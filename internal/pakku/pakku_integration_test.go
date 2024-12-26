@@ -2,6 +2,7 @@ package pakku
 
 import (
 	"context"
+	"io"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -19,6 +20,15 @@ var (
 	}
 )
 
+func mustReadAll(reader io.Reader) []byte {
+	data, err := io.ReadAll(reader)
+	if err != nil {
+		panic(err)
+	}
+
+	return data
+}
+
 func TestApt(t *testing.T) {
 	req := testcontainers.ContainerRequest{
 		Image:      "public.ecr.aws/docker/library/debian:12",
@@ -34,27 +44,27 @@ func TestApt(t *testing.T) {
 	defer testcontainers.CleanupContainer(t, container)
 	require.NoError(t, err)
 
-	rc, _, err := container.Exec(ctx, []string{"pakku", "init"})
+	rc, data, err := container.Exec(ctx, []string{"pakku", "init"})
 	require.NoError(t, err)
-	require.Zero(t, rc)
+	require.Zerof(t, rc, "expected return code 0 but got %d: %s", rc, mustReadAll(data))
 
-	rc, _, err = container.Exec(ctx, []string{"pakku", "config"})
+	rc, data, err = container.Exec(ctx, []string{"pakku", "config"})
 	require.NoError(t, err)
-	require.Zero(t, rc)
+	require.Zerof(t, rc, "expected return code 0 but got %d: %s", rc, mustReadAll(data))
 
-	rc, _, err = container.Exec(ctx, []string{"pakku", "add", "apt", "vim"})
+	rc, data, err = container.Exec(ctx, []string{"pakku", "add", "apt", "vim"})
 	require.NoError(t, err)
-	require.Zero(t, rc)
+	require.Zerof(t, rc, "expected return code 0 but got %d: %s", rc, mustReadAll(data))
 
-	rc, _, err = container.Exec(ctx, []string{"pakku", "apply"})
+	rc, data, err = container.Exec(ctx, []string{"pakku", "apply"})
 	require.NoError(t, err)
-	require.Zero(t, rc)
+	require.Zerof(t, rc, "expected return code 0 but got %d: %s", rc, mustReadAll(data))
 
-	rc, _, err = container.Exec(ctx, []string{"pakku", "update"})
+	rc, data, err = container.Exec(ctx, []string{"pakku", "update"})
 	require.NoError(t, err)
-	require.Zero(t, rc)
+	require.Zerof(t, rc, "expected return code 0 but got %d: %s", rc, mustReadAll(data))
 
-	rc, _, err = container.Exec(ctx, []string{"pakku", "remove", "apt", "vim"})
+	rc, data, err = container.Exec(ctx, []string{"pakku", "remove", "apt", "vim"})
 	require.NoError(t, err)
-	require.Zero(t, rc)
+	require.Zerof(t, rc, "expected return code 0 but got %d: %s", rc, mustReadAll(data))
 }
