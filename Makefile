@@ -28,4 +28,4 @@ fmt:
 clean:
 	go clean
 	rm -rf dist/
-	rm pakku
+	rm -f pakku
