@@ -20,6 +20,12 @@ var (
 	}
 )
 
+func mustSucceed(t *testing.T, container testcontainers.Container, cmd []string) {
+	rc, data, err := container.Exec(ctx, cmd)
+	require.NoError(t, err)
+	require.Zerof(t, rc, "expected return code 0 but got %d: %s", rc, mustReadAll(data))
+}
+
 func mustReadAll(reader io.Reader) []byte {
 	data, err := io.ReadAll(reader)
 	if err != nil {
@@ -44,27 +50,10 @@ func TestApt(t *testing.T) {
 	defer testcontainers.CleanupContainer(t, container)
 	require.NoError(t, err)
 
-	rc, data, err := container.Exec(ctx, []string{"pakku", "init"})
-	require.NoError(t, err)
-	require.Zerof(t, rc, "expected return code 0 but got %d: %s", rc, mustReadAll(data))
-
-	rc, data, err = container.Exec(ctx, []string{"pakku", "config"})
-	require.NoError(t, err)
-	require.Zerof(t, rc, "expected return code 0 but got %d: %s", rc, mustReadAll(data))
-
-	rc, data, err = container.Exec(ctx, []string{"pakku", "add", "apt", "vim"})
-	require.NoError(t, err)
-	require.Zerof(t, rc, "expected return code 0 but got %d: %s", rc, mustReadAll(data))
-
-	rc, data, err = container.Exec(ctx, []string{"pakku", "apply"})
-	require.NoError(t, err)
-	require.Zerof(t, rc, "expected return code 0 but got %d: %s", rc, mustReadAll(data))
-
-	rc, data, err = container.Exec(ctx, []string{"pakku", "update"})
-	require.NoError(t, err)
-	require.Zerof(t, rc, "expected return code 0 but got %d: %s", rc, mustReadAll(data))
-
-	rc, data, err = container.Exec(ctx, []string{"pakku", "remove", "apt", "vim"})
-	require.NoError(t, err)
-	require.Zerof(t, rc, "expected return code 0 but got %d: %s", rc, mustReadAll(data))
+	mustSucceed(t, container, []string{"pakku", "init"})
+	mustSucceed(t, container, []string{"pakku", "config"})
+	mustSucceed(t, container, []string{"pakku", "add", "apt", "vim"})
+	mustSucceed(t, container, []string{"pakku", "apply"})
+	mustSucceed(t, container, []string{"pakku", "update"})
+	mustSucceed(t, container, []string{"pakku", "remove", "apt", "vim"})
 }
