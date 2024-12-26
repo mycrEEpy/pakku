@@ -103,3 +103,26 @@ func TestBrew(t *testing.T) {
 	mustSucceed(t, container, []string{"pakku", "update"})
 	mustSucceed(t, container, []string{"pakku", "remove", "brew", "vim"})
 }
+
+func TestPkgx(t *testing.T) {
+	req := testcontainers.ContainerRequest{
+		Image:      "pkgxdev/pkgx:v1",
+		Entrypoint: []string{"bash", "-c", "echo ready && sleep 60"},
+		Files:      []testcontainers.ContainerFile{pakkuFile},
+		WaitingFor: wait.ForLog("ready"),
+	}
+
+	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+		ContainerRequest: req,
+		Started:          true,
+	})
+	defer testcontainers.CleanupContainer(t, container)
+	require.NoError(t, err)
+
+	mustSucceed(t, container, []string{"pakku", "init"})
+	mustSucceed(t, container, []string{"pakku", "config"})
+	mustSucceed(t, container, []string{"pakku", "add", "pkgx", "vim.org@9"})
+	mustSucceed(t, container, []string{"pakku", "apply"})
+	mustSucceed(t, container, []string{"pakku", "update"})
+	mustSucceed(t, container, []string{"pakku", "remove", "pkgx", "vim.org@9"})
+}
