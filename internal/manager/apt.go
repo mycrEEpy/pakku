@@ -14,7 +14,12 @@ func (m *Apt) InstallPackages(ctx context.Context, verbose bool) error {
 	for _, pkg := range m.Packages {
 		fmt.Printf("Installing %s with apt...\n", pkg)
 
-		err := runCommand(ctx, []string{"apt-get", "--yes", "install", pkg}, m.Sudo, verbose)
+		err := runCommand(ctx, []string{"apt-get", "--yes", "update"}, m.Sudo, verbose)
+		if err != nil {
+			return fmt.Errorf("failed to install %s: %w", pkg, err)
+		}
+
+		err = runCommand(ctx, []string{"apt-get", "--yes", "install", pkg}, m.Sudo, verbose)
 		if err != nil {
 			return fmt.Errorf("failed to install %s: %w", pkg, err)
 		}
