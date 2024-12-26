@@ -1,11 +1,11 @@
 snapshot-single: clean
-	goreleaser build --snapshot --single-target
+	unset GITLAB_TOKEN && goreleaser build --snapshot --single-target
 
 snapshot: clean
 	goreleaser build --snapshot
 
 build: clean
-	goreleaser build
+	go build ./cmd/pakku/
 
 release: clean
 	goreleaser release --clean
@@ -28,3 +28,4 @@ fmt:
 clean:
 	go clean
 	rm -rf dist/
+	rm pakku

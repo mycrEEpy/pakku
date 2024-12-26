@@ -30,3 +30,4 @@ go.work.sum
 
 # Goreleaser
 dist/
+pakku
