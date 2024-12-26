@@ -21,7 +21,7 @@ var (
 func TestApt(t *testing.T) {
 	req := testcontainers.ContainerRequest{
 		Image:      "public.ecr.aws/docker/library/debian:12",
-		Entrypoint: []string{"sleep", "60"},
+		Entrypoint: []string{"bash", "-c", "sleep 60"},
 		Files:      []testcontainers.ContainerFile{pakkuFile},
 	}
 
