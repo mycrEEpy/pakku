@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/wait"
 )
 
 var (
@@ -21,8 +22,9 @@ var (
 func TestApt(t *testing.T) {
 	req := testcontainers.ContainerRequest{
 		Image:      "public.ecr.aws/docker/library/debian:12",
-		Entrypoint: []string{"bash", "-c", "sleep 60"},
+		Entrypoint: []string{"bash", "-c", "echo ready && sleep 60"},
 		Files:      []testcontainers.ContainerFile{pakkuFile},
+		WaitingFor: wait.ForLog("ready"),
 	}
 
 	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
