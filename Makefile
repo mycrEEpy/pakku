@@ -5,7 +5,7 @@ snapshot: clean
 	goreleaser build --snapshot
 
 build: clean
-	go build ./cmd/pakku/
+	go build -v ./cmd/pakku/
 
 release: clean
 	goreleaser release --clean
@@ -17,7 +17,7 @@ lint:
 	golangci-lint run --timeout 5m
 
 test:
-	go test -coverprofile coverage.out -race ./...
+	go test -v -coverprofile coverage.out -race ./...
 
 tidy:
 	go mod tidy
