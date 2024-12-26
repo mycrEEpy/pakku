@@ -38,7 +38,7 @@ func mustReadAll(reader io.Reader) []byte {
 func TestApt(t *testing.T) {
 	req := testcontainers.ContainerRequest{
 		Image:      "debian:12",
-		Entrypoint: []string{"bash", "-c", "echo ready && sleep 60"},
+		Entrypoint: []string{"bash", "-c", "echo ready && sleep 300"},
 		Files:      []testcontainers.ContainerFile{pakkuFile},
 		WaitingFor: wait.ForLog("ready"),
 	}
@@ -52,16 +52,16 @@ func TestApt(t *testing.T) {
 
 	mustSucceed(t, container, []string{"pakku", "init"})
 	mustSucceed(t, container, []string{"pakku", "config"})
-	mustSucceed(t, container, []string{"pakku", "add", "apt", "vim"})
+	mustSucceed(t, container, []string{"pakku", "add", "apt", "curl"})
 	mustSucceed(t, container, []string{"pakku", "apply", "-verbose"})
 	mustSucceed(t, container, []string{"pakku", "update", "-verbose"})
-	mustSucceed(t, container, []string{"pakku", "remove", "apt", "vim"})
+	mustSucceed(t, container, []string{"pakku", "remove", "apt", "curl"})
 }
 
 func TestDnf(t *testing.T) {
 	req := testcontainers.ContainerRequest{
 		Image:      "fedora:41",
-		Entrypoint: []string{"bash", "-c", "echo ready && sleep 60"},
+		Entrypoint: []string{"bash", "-c", "echo ready && sleep 300"},
 		Files:      []testcontainers.ContainerFile{pakkuFile},
 		WaitingFor: wait.ForLog("ready"),
 	}
@@ -75,16 +75,16 @@ func TestDnf(t *testing.T) {
 
 	mustSucceed(t, container, []string{"pakku", "init"})
 	mustSucceed(t, container, []string{"pakku", "config"})
-	mustSucceed(t, container, []string{"pakku", "add", "dnf", "vim"})
+	mustSucceed(t, container, []string{"pakku", "add", "dnf", "curl"})
 	mustSucceed(t, container, []string{"pakku", "apply", "-verbose"})
 	mustSucceed(t, container, []string{"pakku", "update", "-verbose"})
-	mustSucceed(t, container, []string{"pakku", "remove", "dnf", "vim"})
+	mustSucceed(t, container, []string{"pakku", "remove", "dnf", "curl"})
 }
 
 func TestBrew(t *testing.T) {
 	req := testcontainers.ContainerRequest{
 		Image:      "homebrew/brew:latest",
-		Entrypoint: []string{"bash", "-c", "echo ready && sleep 60"},
+		Entrypoint: []string{"bash", "-c", "echo ready && sleep 300"},
 		Files:      []testcontainers.ContainerFile{pakkuFile},
 		WaitingFor: wait.ForLog("ready"),
 	}
@@ -98,16 +98,16 @@ func TestBrew(t *testing.T) {
 
 	mustSucceed(t, container, []string{"pakku", "init"})
 	mustSucceed(t, container, []string{"pakku", "config"})
-	mustSucceed(t, container, []string{"pakku", "add", "brew", "vim"})
+	mustSucceed(t, container, []string{"pakku", "add", "brew", "curl"})
 	mustSucceed(t, container, []string{"pakku", "apply", "-verbose"})
 	mustSucceed(t, container, []string{"pakku", "update", "-verbose"})
-	mustSucceed(t, container, []string{"pakku", "remove", "brew", "vim"})
+	mustSucceed(t, container, []string{"pakku", "remove", "brew", "curl"})
 }
 
 func TestPkgx(t *testing.T) {
 	req := testcontainers.ContainerRequest{
 		Image:      "pkgxdev/pkgx:v1",
-		Entrypoint: []string{"bash", "-c", "echo ready && sleep 60"},
+		Entrypoint: []string{"bash", "-c", "echo ready && sleep 300"},
 		Files:      []testcontainers.ContainerFile{pakkuFile},
 		WaitingFor: wait.ForLog("ready"),
 	}
@@ -121,8 +121,8 @@ func TestPkgx(t *testing.T) {
 
 	mustSucceed(t, container, []string{"pakku", "init"})
 	mustSucceed(t, container, []string{"pakku", "config"})
-	mustSucceed(t, container, []string{"pakku", "add", "pkgx", "vim.org@9"})
+	mustSucceed(t, container, []string{"pakku", "add", "pkgx", "curl.se@8"})
 	mustSucceed(t, container, []string{"pakku", "apply", "-verbose"})
 	mustSucceed(t, container, []string{"pakku", "update", "-verbose"})
-	mustSucceed(t, container, []string{"pakku", "remove", "pkgx", "vim.org@9"})
+	mustSucceed(t, container, []string{"pakku", "remove", "pkgx", "curl.se@8"})
 }
