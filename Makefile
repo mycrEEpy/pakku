@@ -5,7 +5,8 @@ snapshot: clean
 	goreleaser build --snapshot
 
 build: clean
-	go build -v ./cmd/pakku/
+	mkdir -p dist
+	go build -v -o dist/pakku ./cmd/pakku/
 
 release: clean
 	goreleaser release --clean
@@ -28,4 +29,3 @@ fmt:
 clean:
 	go clean
 	rm -rf dist/
-	rm -f pakku

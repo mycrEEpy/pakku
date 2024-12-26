@@ -14,7 +14,7 @@ var (
 	ctx = context.Background()
 
 	pakkuFile = testcontainers.ContainerFile{
-		HostFilePath:      "../../pakku",
+		HostFilePath:      "../../dist/pakku",
 		ContainerFilePath: "/usr/local/bin/pakku",
 		FileMode:          0o755,
 	}
