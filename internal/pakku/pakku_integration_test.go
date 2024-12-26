@@ -83,7 +83,7 @@ func TestDnf(t *testing.T) {
 
 func TestBrew(t *testing.T) {
 	req := testcontainers.ContainerRequest{
-		Image:      "debian:12",
+		Image:      "homebrew/brew:latest",
 		Entrypoint: []string{"bash", "-c", "echo ready && sleep 60"},
 		Files:      []testcontainers.ContainerFile{pakkuFile},
 		WaitingFor: wait.ForLog("ready"),
@@ -95,8 +95,6 @@ func TestBrew(t *testing.T) {
 	})
 	defer testcontainers.CleanupContainer(t, container)
 	require.NoError(t, err)
-
-	mustSucceed(t, container, []string{"/bin/bash", "-c", "\"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""})
 
 	mustSucceed(t, container, []string{"pakku", "init"})
 	mustSucceed(t, container, []string{"pakku", "config"})
