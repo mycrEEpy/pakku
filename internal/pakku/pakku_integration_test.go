@@ -53,8 +53,8 @@ func TestApt(t *testing.T) {
 	mustSucceed(t, container, []string{"pakku", "init"})
 	mustSucceed(t, container, []string{"pakku", "config"})
 	mustSucceed(t, container, []string{"pakku", "add", "apt", "vim"})
-	mustSucceed(t, container, []string{"pakku", "apply"})
-	mustSucceed(t, container, []string{"pakku", "update"})
+	mustSucceed(t, container, []string{"pakku", "apply", "-verbose"})
+	mustSucceed(t, container, []string{"pakku", "update", "-verbose"})
 	mustSucceed(t, container, []string{"pakku", "remove", "apt", "vim"})
 }
 
@@ -76,8 +76,8 @@ func TestDnf(t *testing.T) {
 	mustSucceed(t, container, []string{"pakku", "init"})
 	mustSucceed(t, container, []string{"pakku", "config"})
 	mustSucceed(t, container, []string{"pakku", "add", "dnf", "vim"})
-	mustSucceed(t, container, []string{"pakku", "apply"})
-	mustSucceed(t, container, []string{"pakku", "update"})
+	mustSucceed(t, container, []string{"pakku", "apply", "-verbose"})
+	mustSucceed(t, container, []string{"pakku", "update", "-verbose"})
 	mustSucceed(t, container, []string{"pakku", "remove", "dnf", "vim"})
 }
 
@@ -99,8 +99,8 @@ func TestBrew(t *testing.T) {
 	mustSucceed(t, container, []string{"pakku", "init"})
 	mustSucceed(t, container, []string{"pakku", "config"})
 	mustSucceed(t, container, []string{"pakku", "add", "brew", "vim"})
-	mustSucceed(t, container, []string{"pakku", "apply"})
-	mustSucceed(t, container, []string{"pakku", "update"})
+	mustSucceed(t, container, []string{"pakku", "apply", "-verbose"})
+	mustSucceed(t, container, []string{"pakku", "update", "-verbose"})
 	mustSucceed(t, container, []string{"pakku", "remove", "brew", "vim"})
 }
 
@@ -122,7 +122,7 @@ func TestPkgx(t *testing.T) {
 	mustSucceed(t, container, []string{"pakku", "init"})
 	mustSucceed(t, container, []string{"pakku", "config"})
 	mustSucceed(t, container, []string{"pakku", "add", "pkgx", "vim.org@9"})
-	mustSucceed(t, container, []string{"pakku", "apply"})
-	mustSucceed(t, container, []string{"pakku", "update"})
+	mustSucceed(t, container, []string{"pakku", "apply", "-verbose"})
+	mustSucceed(t, container, []string{"pakku", "update", "-verbose"})
 	mustSucceed(t, container, []string{"pakku", "remove", "pkgx", "vim.org@9"})
 }
