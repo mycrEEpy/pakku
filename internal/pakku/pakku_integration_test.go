@@ -121,8 +121,8 @@ func TestPkgm(t *testing.T) {
 
 	mustSucceed(t, container, []string{"pakku", "init"})
 	mustSucceed(t, container, []string{"pakku", "config"})
-	mustSucceed(t, container, []string{"pakku", "add", "pkgx", "curl.se^8"})
+	mustSucceed(t, container, []string{"pakku", "add", "pkgm", "curl.se^8"})
 	mustSucceed(t, container, []string{"pakku", "apply", "-verbose"})
 	mustSucceed(t, container, []string{"pakku", "update", "-verbose"})
-	mustSucceed(t, container, []string{"pakku", "remove", "pkgx", "curl.se^8"})
+	mustSucceed(t, container, []string{"pakku", "remove", "pkgm", "curl.se^8"})
 }
