@@ -104,9 +104,9 @@ func TestBrew(t *testing.T) {
 	mustSucceed(t, container, []string{"pakku", "remove", "brew", "curl"})
 }
 
-func TestPkgx(t *testing.T) {
+func TestPkgm(t *testing.T) {
 	req := testcontainers.ContainerRequest{
-		Image:      "pkgxdev/pkgx:v1",
+		Image:      "pkgxdev/pkgx:v2",
 		Entrypoint: []string{"bash", "-c", "echo ready && sleep 300"},
 		Files:      []testcontainers.ContainerFile{pakkuFile},
 		WaitingFor: wait.ForLog("ready"),
@@ -121,8 +121,8 @@ func TestPkgx(t *testing.T) {
 
 	mustSucceed(t, container, []string{"pakku", "init"})
 	mustSucceed(t, container, []string{"pakku", "config"})
-	mustSucceed(t, container, []string{"pakku", "add", "pkgx", "curl.se@8"})
+	mustSucceed(t, container, []string{"pakku", "add", "pkgx", "curl.se^8"})
 	mustSucceed(t, container, []string{"pakku", "apply", "-verbose"})
 	mustSucceed(t, container, []string{"pakku", "update", "-verbose"})
-	mustSucceed(t, container, []string{"pakku", "remove", "pkgx", "curl.se@8"})
+	mustSucceed(t, container, []string{"pakku", "remove", "pkgx", "curl.se^8"})
 }
