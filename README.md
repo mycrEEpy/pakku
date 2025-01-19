@@ -33,3 +33,10 @@ pkgx install github.com/mycreepy/pakku@latest
   * `pakku add brew awscli`
 * Install the packages on your system:
   * `pakku apply`
+
+## Supported Package Managers
+
+* apt
+* brew
+* dnf
+* pkgm
