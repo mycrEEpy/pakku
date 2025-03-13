@@ -4,4 +4,4 @@ apt:
     - curl
 pkgx:
   packages:
-    - kubectl@1.31.0
+    - kubectl^1
