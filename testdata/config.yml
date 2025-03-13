@@ -2,6 +2,6 @@ version: 1
 apt:
   packages:
     - curl
-pkgm:
+pkgx:
   packages:
     - kubectl^1
