@@ -34,7 +34,10 @@ func (m *Pkgx) UpdatePackages(ctx context.Context, verbose bool) error {
 		return nil
 	}
 
-	fmt.Println("Updating packages with pkgx...")
+	//fmt.Println("Updating packages with pkgx...")
+	//return runCommand(ctx, []string{"pkgx", "pkgm", "update"}, m.Sudo, verbose)
 
-	return runCommand(ctx, []string{"pkgx", "pkgm", "update"}, m.Sudo, verbose)
+	fmt.Println("Updating packages with pkgx is currently not supported...")
+
+	return nil
 }
