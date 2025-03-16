@@ -21,7 +21,7 @@ go install github.com/mycreepy/pakku/cmd/pakku@latest
 Using Pkgx:
 
 ```shell
-pkgx install github.com/mycreepy/pakku@latest
+pkgx pkgm local-install github.com/mycreepy/pakku
 ```
 
 ## Usage
