@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-const pkgmMinVersion = `"pkgm>=0.9.0"`
+const pkgmMinVersion = "pkgm>=0.9.0"
 
 type Pkgx struct {
 	Packages []string
