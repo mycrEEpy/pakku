@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-const pkgmMinVersion = "pkgm>=0.9.0"
+const pkgmMinVersion = `"pkgm>=0.9.0"`
 
 type Pkgx struct {
 	Packages []string
@@ -16,13 +16,7 @@ func (m *Pkgx) InstallPackages(ctx context.Context, verbose bool) error {
 	for _, pkg := range m.Packages {
 		fmt.Printf("Installing %s with pkgx...\n", pkg)
 
-		installCommand := "local-install"
-
-		if m.Sudo {
-			installCommand = "install"
-		}
-
-		err := runCommand(ctx, []string{"pkgx", pkgmMinVersion, installCommand, pkg}, m.Sudo, verbose)
+		err := runCommand(ctx, []string{"pkgx", pkgmMinVersion, "install", pkg}, m.Sudo, verbose)
 		if err != nil {
 			return fmt.Errorf("failed to install %s: %w", pkg, err)
 		}
