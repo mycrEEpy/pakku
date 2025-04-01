@@ -5,6 +5,8 @@ import (
 	"fmt"
 )
 
+const pkgmMinVersion = "pkgm>=0.9.0"
+
 type Pkgx struct {
 	Packages []string
 	Sudo     bool
@@ -20,7 +22,7 @@ func (m *Pkgx) InstallPackages(ctx context.Context, verbose bool) error {
 			installCommand = "install"
 		}
 
-		err := runCommand(ctx, []string{"pkgx", "pkgm", installCommand, pkg}, m.Sudo, verbose)
+		err := runCommand(ctx, []string{"pkgx", pkgmMinVersion, installCommand, pkg}, m.Sudo, verbose)
 		if err != nil {
 			return fmt.Errorf("failed to install %s: %w", pkg, err)
 		}
@@ -34,10 +36,6 @@ func (m *Pkgx) UpdatePackages(ctx context.Context, verbose bool) error {
 		return nil
 	}
 
-	//fmt.Println("Updating packages with pkgx...")
-	//return runCommand(ctx, []string{"pkgx", "pkgm", "update"}, m.Sudo, verbose)
-
-	fmt.Println("Updating packages with pkgx is currently not supported...")
-
-	return nil
+	fmt.Println("Updating packages with pkgx...")
+	return runCommand(ctx, []string{"pkgx", pkgmMinVersion, "update"}, m.Sudo, verbose)
 }
