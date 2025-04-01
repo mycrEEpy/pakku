@@ -45,7 +45,12 @@ func parseConfigVersion(path string) (*ConfigVersion, error) {
 		return nil, fmt.Errorf("failed to open config file: %w", err)
 	}
 
-	defer file.Close()
+	defer func() {
+		closeErr := file.Close()
+		if closeErr != nil {
+			fmt.Printf("error: failed to close config file: %s\n", closeErr)
+		}
+	}()
 
 	var configVersion ConfigVersion
 
@@ -63,7 +68,12 @@ func parseConfig(path string) (*Config, error) {
 		return nil, fmt.Errorf("failed to open config file: %w", err)
 	}
 
-	defer file.Close()
+	defer func() {
+		closeErr := file.Close()
+		if closeErr != nil {
+			fmt.Printf("error: failed to close config file: %s\n", closeErr)
+		}
+	}()
 
 	var config Config
 

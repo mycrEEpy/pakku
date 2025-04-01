@@ -256,7 +256,12 @@ func (p *Pakku) writeConfigToDisk() error {
 		return fmt.Errorf("failed to open config file: %w", err)
 	}
 
-	defer file.Close()
+	defer func() {
+		closeErr := file.Close()
+		if closeErr != nil {
+			fmt.Printf("error: failed to close config file: %s\n", closeErr)
+		}
+	}()
 
 	encoder := yaml.NewEncoder(file)
 	encoder.SetIndent(2)
