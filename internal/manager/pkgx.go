@@ -25,11 +25,14 @@ func (m *Pkgx) InstallPackages(ctx context.Context, verbose bool) error {
 	return nil
 }
 
-func (m *Pkgx) UpdatePackages(ctx context.Context, verbose bool) error {
+func (m *Pkgx) UpdatePackages(_ context.Context, _ bool) error {
 	if len(m.Packages) == 0 {
 		return nil
 	}
 
-	fmt.Println("Updating packages with pkgx...")
-	return runCommand(ctx, []string{"pkgx", pkgmMinVersion, "update"}, m.Sudo, verbose)
+	fmt.Println("Updating packages with pkgx is currently not supported")
+	return nil
+
+	//fmt.Println("Updating packages with pkgx...")
+	//return runCommand(ctx, []string{"pkgx", pkgmMinVersion, "update"}, m.Sudo, verbose)
 }
