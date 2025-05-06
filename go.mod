@@ -2,7 +2,7 @@ module github.com/mycreepy/pakku
 
 go 1.23.0
 
-toolchain go1.24.2
+toolchain go1.24.3
 
 require (
 	github.com/stretchr/testify v1.10.0
