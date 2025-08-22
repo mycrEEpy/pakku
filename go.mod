@@ -2,8 +2,6 @@ module github.com/mycreepy/pakku
 
 go 1.23.0
 
-toolchain go1.24.6
-
 require (
 	github.com/stretchr/testify v1.10.0
 	github.com/testcontainers/testcontainers-go v0.38.0
