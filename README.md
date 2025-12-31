@@ -39,4 +39,5 @@ pkgx pkgm install github.com/mycreepy/pakku
 * apt
 * brew
 * dnf
+* pacman
 * pkgx

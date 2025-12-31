@@ -20,10 +20,11 @@ type ConfigPackageManager struct {
 type Config struct {
 	ConfigVersion `yaml:",inline"`
 
-	Apt  ConfigPackageManager `yaml:"apt"`
-	Brew ConfigPackageManager `yaml:"brew"`
-	Dnf  ConfigPackageManager `yaml:"dnf"`
-	Pkgx ConfigPackageManager `yaml:"pkgx"`
+	Apt    ConfigPackageManager `yaml:"apt"`
+	Brew   ConfigPackageManager `yaml:"brew"`
+	Dnf    ConfigPackageManager `yaml:"dnf"`
+	Pkgx   ConfigPackageManager `yaml:"pkgx"`
+	Pacman ConfigPackageManager `yaml:"pacman"`
 }
 
 func resolveAbsoluteConfigPath() (string, error) {

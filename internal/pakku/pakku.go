@@ -14,12 +14,13 @@ import (
 )
 
 type Pakku struct {
-	configPath  string
-	config      *Config
-	AptManager  manager.Manager
-	BrewManager manager.Manager
-	DnfManager  manager.Manager
-	PkgxManager manager.Manager
+	configPath    string
+	config        *Config
+	AptManager    manager.Manager
+	BrewManager   manager.Manager
+	DnfManager    manager.Manager
+	PkgxManager   manager.Manager
+	PacmanManager manager.Manager
 }
 
 func New() (*Pakku, error) {
@@ -40,6 +41,7 @@ func (p *Pakku) setupManagers() error {
 	p.BrewManager = &manager.Brew{Packages: p.config.Brew.Packages, Sudo: p.config.Brew.Sudo}
 	p.DnfManager = &manager.Dnf{Packages: p.config.Dnf.Packages, Sudo: p.config.Dnf.Sudo}
 	p.PkgxManager = &manager.Pkgx{Packages: p.config.Pkgx.Packages, Sudo: p.config.Pkgx.Sudo}
+	p.PacmanManager = &manager.Pacman{Packages: p.config.Pacman.Packages, Sudo: p.config.Pacman.Sudo}
 
 	return nil
 }
@@ -103,6 +105,7 @@ func (p *Pakku) printHelp() error {
 	fmt.Println("	apt")
 	fmt.Println("	brew")
 	fmt.Println("	dnf")
+	fmt.Println("	pacman")
 	fmt.Println("	pkgx")
 	fmt.Println()
 
@@ -202,6 +205,14 @@ func (p *Pakku) addPackageToConfig(manager, pkg string) error {
 		p.config.Pkgx.Packages = append(p.config.Pkgx.Packages, pkg)
 
 		slices.Sort(p.config.Pkgx.Packages)
+	case "pacman":
+		if slices.Contains(p.config.Pacman.Packages, pkg) {
+			return fmt.Errorf("package %s has already been added for %s", pkg, manager)
+		}
+
+		p.config.Pacman.Packages = append(p.config.Pacman.Packages, pkg)
+
+		slices.Sort(p.config.Pacman.Packages)
 	default:
 		return fmt.Errorf("unsupported package manager: %s", manager)
 	}
@@ -243,6 +254,14 @@ func (p *Pakku) removePackageFromConfig(manager, pkg string) error {
 		idx := slices.Index(p.config.Pkgx.Packages, pkg)
 
 		p.config.Pkgx.Packages = slices.Delete(p.config.Pkgx.Packages, idx, idx+1)
+	case "pacman":
+		if !slices.Contains(p.config.Pacman.Packages, pkg) {
+			return fmt.Errorf("package %s has not been added for %s", pkg, manager)
+		}
+
+		idx := slices.Index(p.config.Pacman.Packages, pkg)
+
+		p.config.Pacman.Packages = slices.Delete(p.config.Pacman.Packages, idx, idx+1)
 	default:
 		return fmt.Errorf("unsupported package manager: %s", manager)
 	}
@@ -320,6 +339,11 @@ func (p *Pakku) applyPackages(ctx context.Context) error {
 		return fmt.Errorf("failed to install packages for pkgx: %w", err)
 	}
 
+	err = p.PacmanManager.InstallPackages(ctx, *verbose)
+	if err != nil {
+		return fmt.Errorf("failed to install packages for pacman: %w", err)
+	}
+
 	return nil
 }
 
@@ -351,6 +375,11 @@ func (p *Pakku) applyUpdate(ctx context.Context) error {
 	err = p.PkgxManager.UpdatePackages(ctx, *verbose)
 	if err != nil {
 		return fmt.Errorf("failed to update packages for pkgx: %w", err)
+	}
+
+	err = p.PacmanManager.UpdatePackages(ctx, *verbose)
+	if err != nil {
+		return fmt.Errorf("failed to update packages for pacman: %w", err)
 	}
 
 	return nil
