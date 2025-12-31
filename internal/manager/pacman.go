@@ -14,7 +14,7 @@ func (m *Pacman) InstallPackages(ctx context.Context, verbose bool) error {
 	for _, pkg := range m.Packages {
 		fmt.Printf("Installing %s with pacman...\n", pkg)
 
-		err := runCommand(ctx, []string{"pacman", "-y", "-S", pkg}, m.Sudo, verbose)
+		err := runCommand(ctx, []string{"pacman", "--noconfirm", "-y", "-S", pkg}, m.Sudo, verbose)
 		if err != nil {
 			return fmt.Errorf("failed to install %s: %w", pkg, err)
 		}
@@ -30,5 +30,5 @@ func (m *Pacman) UpdatePackages(ctx context.Context, verbose bool) error {
 
 	fmt.Println("Updating packages with pacman...")
 
-	return runCommand(ctx, append([]string{"pacman", "-Syu"}, m.Packages...), m.Sudo, verbose)
+	return runCommand(ctx, append([]string{"pacman", "--noconfirm", "-Syu"}, m.Packages...), m.Sudo, verbose)
 }
