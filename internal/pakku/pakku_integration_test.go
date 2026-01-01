@@ -126,3 +126,26 @@ func TestPkgx(t *testing.T) {
 	mustSucceed(t, container, []string{"pakku", "update", "-verbose"})
 	mustSucceed(t, container, []string{"pakku", "remove", "pkgx", "curl.se^8"})
 }
+
+func TestPacman(t *testing.T) {
+	req := testcontainers.ContainerRequest{
+		Image:      "archlinux:base",
+		Entrypoint: []string{"bash", "-c", "echo ready && sleep 300"},
+		Files:      []testcontainers.ContainerFile{pakkuFile},
+		WaitingFor: wait.ForLog("ready"),
+	}
+
+	container, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+		ContainerRequest: req,
+		Started:          true,
+	})
+	defer testcontainers.CleanupContainer(t, container)
+	require.NoError(t, err)
+
+	mustSucceed(t, container, []string{"pakku", "init"})
+	mustSucceed(t, container, []string{"pakku", "config"})
+	mustSucceed(t, container, []string{"pakku", "add", "pacman", "curl"})
+	mustSucceed(t, container, []string{"pakku", "apply", "-verbose"})
+	mustSucceed(t, container, []string{"pakku", "update", "-verbose"})
+	mustSucceed(t, container, []string{"pakku", "remove", "pacman", "curl"})
+}
