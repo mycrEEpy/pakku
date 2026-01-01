@@ -147,5 +147,5 @@ func TestPacman(t *testing.T) {
 	mustSucceed(t, container, []string{"pakku", "add", "pacman", "curl"})
 	mustSucceed(t, container, []string{"pakku", "apply", "-verbose"})
 	mustSucceed(t, container, []string{"pakku", "update", "-verbose"})
-	mustSucceed(t, container, []string{"pakku", "remove", "pkgx", "curl"})
+	mustSucceed(t, container, []string{"pakku", "remove", "pacman", "curl"})
 }
