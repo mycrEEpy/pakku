@@ -10,7 +10,7 @@ import (
 	"slices"
 
 	"github.com/mycreepy/pakku/internal/manager"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 )
 
 type Pakku struct {
