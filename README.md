@@ -18,10 +18,10 @@ Using Go:
 go install github.com/mycreepy/pakku/cmd/pakku@latest
 ```
 
-Using Pkgx:
+Using Pkgm:
 
 ```shell
-pkgx pkgm install github.com/mycreepy/pakku
+pkgm install github.com/mycreepy/pakku
 ```
 
 ## Usage
@@ -40,4 +40,4 @@ pkgx pkgm install github.com/mycreepy/pakku
 * brew
 * dnf
 * pacman
-* pkgx
+* pkgm

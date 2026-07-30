@@ -19,7 +19,7 @@ type Pakku struct {
 	AptManager    manager.Manager
 	BrewManager   manager.Manager
 	DnfManager    manager.Manager
-	PkgxManager   manager.Manager
+	PkgmManager   manager.Manager
 	PacmanManager manager.Manager
 }
 
@@ -40,7 +40,7 @@ func (p *Pakku) setupManagers() error {
 	p.AptManager = &manager.Apt{Packages: p.config.Apt.Packages, Sudo: p.config.Apt.Sudo}
 	p.BrewManager = &manager.Brew{Packages: p.config.Brew.Packages, Sudo: p.config.Brew.Sudo}
 	p.DnfManager = &manager.Dnf{Packages: p.config.Dnf.Packages, Sudo: p.config.Dnf.Sudo}
-	p.PkgxManager = &manager.Pkgx{Packages: p.config.Pkgx.Packages, Sudo: p.config.Pkgx.Sudo}
+	p.PkgmManager = &manager.Pkgm{Packages: p.config.Pkgm.Packages, Sudo: p.config.Pkgm.Sudo}
 	p.PacmanManager = &manager.Pacman{Packages: p.config.Pacman.Packages, Sudo: p.config.Pacman.Sudo}
 
 	return nil
@@ -106,7 +106,7 @@ func (p *Pakku) printHelp() error {
 	fmt.Println("	brew")
 	fmt.Println("	dnf")
 	fmt.Println("	pacman")
-	fmt.Println("	pkgx")
+	fmt.Println("	pkgm")
 	fmt.Println()
 
 	return nil
@@ -197,14 +197,14 @@ func (p *Pakku) addPackageToConfig(manager, pkg string) error {
 		p.config.Dnf.Packages = append(p.config.Dnf.Packages, pkg)
 
 		slices.Sort(p.config.Dnf.Packages)
-	case "pkgx":
-		if slices.Contains(p.config.Pkgx.Packages, pkg) {
+	case "pkgm":
+		if slices.Contains(p.config.Pkgm.Packages, pkg) {
 			return fmt.Errorf("package %s has already been added for %s", pkg, manager)
 		}
 
-		p.config.Pkgx.Packages = append(p.config.Pkgx.Packages, pkg)
+		p.config.Pkgm.Packages = append(p.config.Pkgm.Packages, pkg)
 
-		slices.Sort(p.config.Pkgx.Packages)
+		slices.Sort(p.config.Pkgm.Packages)
 	case "pacman":
 		if slices.Contains(p.config.Pacman.Packages, pkg) {
 			return fmt.Errorf("package %s has already been added for %s", pkg, manager)
@@ -246,14 +246,14 @@ func (p *Pakku) removePackageFromConfig(manager, pkg string) error {
 		idx := slices.Index(p.config.Dnf.Packages, pkg)
 
 		p.config.Dnf.Packages = slices.Delete(p.config.Dnf.Packages, idx, idx+1)
-	case "pkgx":
-		if !slices.Contains(p.config.Pkgx.Packages, pkg) {
+	case "pkgm":
+		if !slices.Contains(p.config.Pkgm.Packages, pkg) {
 			return fmt.Errorf("package %s has not been added for %s", pkg, manager)
 		}
 
-		idx := slices.Index(p.config.Pkgx.Packages, pkg)
+		idx := slices.Index(p.config.Pkgm.Packages, pkg)
 
-		p.config.Pkgx.Packages = slices.Delete(p.config.Pkgx.Packages, idx, idx+1)
+		p.config.Pkgm.Packages = slices.Delete(p.config.Pkgm.Packages, idx, idx+1)
 	case "pacman":
 		if !slices.Contains(p.config.Pacman.Packages, pkg) {
 			return fmt.Errorf("package %s has not been added for %s", pkg, manager)
@@ -334,9 +334,9 @@ func (p *Pakku) applyPackages(ctx context.Context) error {
 		return fmt.Errorf("failed to install packages for dnf: %w", err)
 	}
 
-	err = p.PkgxManager.InstallPackages(ctx, *verbose)
+	err = p.PkgmManager.InstallPackages(ctx, *verbose)
 	if err != nil {
-		return fmt.Errorf("failed to install packages for pkgx: %w", err)
+		return fmt.Errorf("failed to install packages for pkgm: %w", err)
 	}
 
 	err = p.PacmanManager.InstallPackages(ctx, *verbose)
@@ -372,9 +372,9 @@ func (p *Pakku) applyUpdate(ctx context.Context) error {
 		return fmt.Errorf("failed to update packages for dnf: %w", err)
 	}
 
-	err = p.PkgxManager.UpdatePackages(ctx, *verbose)
+	err = p.PkgmManager.UpdatePackages(ctx, *verbose)
 	if err != nil {
-		return fmt.Errorf("failed to update packages for pkgx: %w", err)
+		return fmt.Errorf("failed to update packages for pkgm: %w", err)
 	}
 
 	err = p.PacmanManager.UpdatePackages(ctx, *verbose)
